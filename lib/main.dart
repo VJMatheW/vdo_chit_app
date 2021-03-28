@@ -20,21 +20,14 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<InitViewModel>.value(
-      value: locator<InitViewModel>(),
-      child: Consumer<InitViewModel>(
-        builder: (context, model, child) {
-          return MaterialApp(
-            title: 'Chit App',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-              visualDensity: VisualDensity.adaptivePlatformDensity,
-            ),
-            onGenerateRoute: Router.generateRoute,
-            initialRoute: '/',
-          );
-        },
+    return MaterialApp(
+      title: 'Chit App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      onGenerateRoute: Router.generateRoute,
+      initialRoute: '/',
     );
   }
 }
