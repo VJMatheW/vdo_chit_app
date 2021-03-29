@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import './locator.dart';
-import './ui/router.dart';
+import './router.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
   // for both orientation
-  runApp(MyApp());
+  // runApp(MyApp());
 
   // for vertical orientation
-  // SystemChrome.setPreferredOrientations(
-  //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
-  //   runApp(MyApp());
-  // });
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
+    runApp(MyApp());
+  });
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Chit App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
