@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import './locator.dart';
-import './router.dart';
+import 'package:vdo_chit_app/ui/preference_model.dart';
+import 'locator.dart';
+import 'router.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,14 +21,14 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Chit App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return ChangeNotifierProvider.value(
+       value: locator<PreferenceModel>(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Chit App',
+        onGenerateRoute: CustomRouter.generateRoute,
+        initialRoute: '/',
       ),
-      onGenerateRoute: Router.generateRoute,
-      initialRoute: '/',
     );
   }
 }
