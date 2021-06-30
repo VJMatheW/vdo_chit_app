@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vdo_chit_app/ui/preference_model.dart';
+import 'package:vdo_chit_app/core/data_models/data_models.dart';
+import '../preference_model.dart';
 
 import '../../core/shared/ui/base_widget.dart';
 import '../../core/shared/ui/ui_widgets.dart';
+import '../../core/shared/ui/widgets/widgets.dart';
 import '../../locator.dart';
 import '../base_model.dart';
 import '../base_model_widget.dart';
 import 'dashboard_view_model.dart';
 
-class DashboardView extends StatelessWidget {
+class DashboardView extends StatefulWidget {
 
+  @override
+  _DashboardViewState createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<DashboardView> {
    bool toggle = true;
+
+   @override
+   void initState() {   
+      super.initState();
+   }
 
    @override
    Widget build(BuildContext context) {
@@ -35,7 +47,7 @@ class DashboardView extends StatelessWidget {
                   }, 
                   child: Icon(Icons.add),),
                appBar: AppBar(
-                  backgroundColor: Colors.red,
+                  backgroundColor: Provider.of<PreferenceModel>(context).theme.primary,
                   actions: <Widget>[
                      IconButton(
                         icon: Icon(Icons.settings), 
@@ -56,40 +68,18 @@ class DashboardView extends StatelessWidget {
                      // DASHBOARD CARD LIST
                      Expanded( 
                         flex: 1, 
-                        child: ListView(
-                           padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                           physics: BouncingScrollPhysics(),
-                           children: [
-                              Stack(
-                                 children: [
-                                    ChitCard(),
-                                    Positioned(
-                                       right: 10,
-                                       top: 25,
-                                       child: Container(
-                                          decoration: BoxDecoration(
-                                             borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                             color: Colors.red[400]
-                                          ),
-                                          child: Padding(
-                                             padding: const EdgeInsets.symmetric(horizontal: 7.0, vertical: 2.0),
-                                             child: Text("Paid", style: TextStyle(fontSize: 10.0),),
-                                          ),
-                                       ),
-                                    ),
-                                 ],
-                              ),
-                              ChitCard(),
-                              ChitCard(),
-                              ChitCard(),
-                              ChitCard(),
-                              ChitCard(),
-                              ChitCard(),
-                              ChitCard(),
-                              ChitCard(),
-                           ],
+                        child: DashboardChitList()
+                           // children: [
+                           //    ChitCard(),
+                           //    ChitCard(),
+                           //    ChitCard(),
+                           //    ChitCard(),
+                           //    ChitCard(),
+                           //    ChitCard(),
+                           //    ChitCard(),
+                           //    ChitCard(),
+                           // ],
                         )
-                     )
                   ],
                )
             ); 
@@ -104,7 +94,7 @@ class DashboardSearch extends BaseModelWidget<DashboardViewModel>{
    @override
    Widget build(BuildContext context, DashboardViewModel model){
       return Padding(
-         padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
+         padding: const EdgeInsets.only( left: 12.0, right: 12.0, top: 20.0),
          child: UIWidgets.textInput(
             context: context,
             hintText: model.language.hintDashboardSearchMember,
@@ -126,143 +116,105 @@ class DashboardHeading extends BaseModelWidget<DashboardViewModel>{
    }
 }
 
-class ChitCard extends BaseModelWidget<DashboardViewModel> {
-
-   final dynamic data;
-
-   ChitCard({ this.data });
+class DashboardChitList extends BaseModelWidget<DashboardViewModel> {
 
    @override
-   Widget build(BuildContext context, BaseModel model) {
-      return GestureDetector(
-         onLongPress: (){
-            print("Long pressed show edit icons");
-         },
-         onTap: (){
-            print("Move to next screen");
-         },
-        child: Card(
-           margin: EdgeInsets.only(top: 15.0),
-           elevation: 3.0,
-           child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
-              child: Column(
-                 children: [
-
-                     // ROW 1
-                     Row(
-                        children: [
-                           Expanded( 
-                              flex: 1, 
-                              child: Cell(label: model.language.lableChitName, value: "Group A 5L", model: model,)
-                           ),
-                           Expanded(
-                              child: Cell(label: model.language.labelChitValue, value: 500000, model: model,), 
-                              flex: 1,
-                           ),
-                        ],
-                     ),
-                     SizedBox(height: 15.0,),
-                     
-                     // ROW 2
-                     Row(
-                        children: [
-                           Expanded( 
-                              flex: 1, 
-                              child: Cell(label: model.language.labelInstallmentNo, value: 1, model: model,),
-                           ),
-                           Expanded(
-                              flex: 1,
-                              child: Cell(label: model.language.labelMembers, value: 20, icon: Icons.supervisor_account, model: model,),
-                           ),
-                        ],
-                     ),
-
-                     SizedBox(height: 15.0,),
-                     
-                     // ROW 3
-                     Row(
-                        children: [
-                           Expanded(
-                              flex: 1,
-                              child: Cell(label: model.language.labelChitDate, value: 5, model: model,),
-                           ),
-                           Expanded( 
-                              flex: 1, 
-                              child: Cell(label: model.language.labelPayableAmount, value: 20800, model: model,),
-                           ),
-                        ],
-                     ),
-                 ],
-              ),
-           ),
-        ),
-      );
-   }
-}
-
-
-class Cell extends StatelessWidget {
-   
-   final label;
-   final value;
-   final icon;
-   final isPhoneNumber;
-   final BaseModel model;
-
-   const Cell({ Key key, @required this.label, @required this.value, this.icon, this.isPhoneNumber = false, this.model }) : super(key: key);
-
-   @override
-   Widget build(BuildContext context) {
-      return Row(
-         children: [
-            Expanded(
-               flex: 1,
-               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                     // Label with icon
-                     Row(
-                        children: [
-                           Text(
-                              label, 
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                 fontSize: 10.0,
-                                 color: model.theme.primary
-                                 )
-                              ),
-                           // ICON
-                           icon != null 
-                           ? Padding(
-                             padding: const EdgeInsets.only(left:8.0),
-                             child: Icon(icon, color: model.theme.primary, size: 15,),
-                           )
-                           : Container()
-                        ],
-                     ),
-                     // Value
-                     Text(value.toString(),  
-                        style: TextStyle(
-                           fontSize: 20.0,
-                           fontWeight: FontWeight.w400,
-                           ),
-                        // textAlign: TextAlign.left,
-                     )
-                  ],
-               )
-            ),
-            
-            // Phone icon
-            !isPhoneNumber 
-            ? Container()
-            : GestureDetector(
-               onTap: (){
-                  print("Call the number");
+   Widget build(BuildContext context, DashboardViewModel model) {
+      return ListView.builder(
+         padding: const EdgeInsets.symmetric(horizontal: 12.0),
+         physics: BouncingScrollPhysics(),
+         itemCount: model.chitsInfo.length,
+         itemBuilder: (context, index){
+            ChitInfo chitInfo = model.chitsInfo[index];
+            return GestureDetector(
+               onLongPress: (){
+                  print("Long pressed show edit icons");
                },
-               child: Icon(Icons.phone_forwarded)
-            )
-         ],
+               onTap: (){
+                  print("Move to next screen");
+               },
+               child: Card(
+                  margin: EdgeInsets.only(bottom: 15.0),
+                  elevation: 3.0,
+                  child: Padding(
+                     padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                     child: Column(
+                        children: [
+
+                              // ROW 1
+                              Row(
+                                 children: [
+                                    Expanded( 
+                                       flex: 1, 
+                                       child: Cell(
+                                          label: model.language.lableChitName, 
+                                          value: chitInfo.name, 
+                                          model: model
+                                       )
+                                    ),
+                                    Expanded(
+                                       flex: 1,
+                                       child: Cell(
+                                          label: model.language.labelChitValue, 
+                                          value: chitInfo.chitTemplate.amount, 
+                                          model: model,
+                                       ), 
+                                    ),
+                                 ],
+                              ),
+                              SizedBox(height: 15.0,),
+                              
+                              // ROW 2
+                              Row(
+                                 children: [
+                                    Expanded( 
+                                       flex: 1, 
+                                       child: Cell(
+                                          label: model.language.labelInstallmentNo, 
+                                          value: chitInfo.installments[0].installmentNo, 
+                                          model: model,
+                                       ),
+                                    ),
+                                    Expanded(
+                                       flex: 1,
+                                       child: Cell(
+                                          label: model.language.labelMembers, 
+                                          value: chitInfo.chitTemplate.membersCount, 
+                                          icon: Icons.supervisor_account, model: model,
+                                       ),
+                                    ),
+                                 ],
+                              ),
+
+                              SizedBox(height: 15.0,),
+                              
+                              // ROW 3
+                              Row(
+                                 children: [
+                                    Expanded(
+                                       flex: 1,
+                                       child: Cell(
+                                          label: model.language.labelChitDate, 
+                                          value: chitInfo.chitDay, 
+                                          model: model,
+                                       ),
+                                    ),
+                                    Expanded( 
+                                       flex: 1, 
+                                       child: Cell(
+                                          label: model.language.labelPayableAmount, 
+                                          value: chitInfo.installments[0].payableAmount, 
+                                          model: model,
+                                       ),
+                                    ),
+                                 ],
+                              ),
+                        ],
+                     ),
+                  ),
+               ),
+            );
+         }
       );
    }
 }

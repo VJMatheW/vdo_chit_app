@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:vdo_chit_app/ui/preference_model.dart';
+import 'ui/preference_model.dart';
 import 'locator.dart';
 import 'router.dart';
 

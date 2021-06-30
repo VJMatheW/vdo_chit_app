@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'core/data_access/data_access.dart';
 
 import 'core/shared/services/contacts_service.dart';
 import 'core/shared/services/http_service.dart';
@@ -18,6 +19,9 @@ void setupLocator() {
    locator.registerSingleton<PermissionService>(PermissionService());
    locator.registerSingleton<ContactService>(ContactService());
    locator.registerLazySingleton<PreferenceService>(() => PreferenceService());
+
+   // data access
+   locator.registerLazySingleton<ChitDataAccess>(() => ChitDataAccess());
 
    // Models
    locator.registerSingleton<PreferenceModel>(PreferenceModel());

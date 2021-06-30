@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:vdo_chit_app/core/enums_and_variables/variables.dart';
 
 class HttpService {
 
    final httpClient;
    static const Map<String, String> header = { "Content-Type": "application/json" };
+   final baseUrl = Vars.API_HOST;
 
    HttpService(this.httpClient);
 
@@ -16,22 +20,26 @@ class HttpService {
    }
 
    Future<HttpResponse> get({ @required String url, Map<String, String> headers = header }) async{
-      final response = await httpClient.get(Uri.dataFromString(url), headers: headers);
+      print("GET $baseUrl$url");
+      final response = await httpClient.get(Uri.parse("$baseUrl$url"), headers: headers);
       return HttpResponse(response.statusCode, response.body);
    }
 
    Future<HttpResponse> post({ @required String url, Map<String, String> headers = header, Object body }) async{
-      final response = await httpClient.post(Uri.dataFromString(url), body: body, headers: headers);
+      print("POST $baseUrl$url");
+      final response = await httpClient.post(Uri.dataFromString("$baseUrl$url"), body: body, headers: headers);
       return HttpResponse(response.statusCode, response.body);
    }
 }
 
 class HttpResponse{
    int _statusCode;
-   String _body;
+   Map<String, dynamic> _body;
 
-   HttpResponse(this._statusCode, this._body);
+   HttpResponse(this._statusCode, body){
+      _body = jsonDecode(body);
+   }
 
    int get statusCode => _statusCode;
-   String get body => _body;
+   Map<String, dynamic> get body => _body;
 }
