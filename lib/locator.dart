@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
+import 'package:vdo_chit_app/ui/chit_template_view.dart/chit_template_view_model.dart';
 import 'core/data_access/data_access.dart';
 
 import 'core/shared/services/contacts_service.dart';
@@ -28,5 +29,6 @@ void setupLocator() {
 
    // View Models
    locator.registerLazySingleton<DashboardViewModel>(() => DashboardViewModel());
+   locator.registerLazySingleton<ChitTemplateViewModel>(() => ChitTemplateViewModel());
    // locator.registerLazySingleton<T>(() => T());
 }

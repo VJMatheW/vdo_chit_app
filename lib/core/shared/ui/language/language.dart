@@ -7,6 +7,9 @@ abstract class AppLanguage{
    String labelPayableAmount;
    String labelChitDate;
 
+   // appbar headings
+   String appBarChitTemplate;
+
    // headings
    String headingOngoingChits;
 
@@ -24,7 +27,10 @@ class English implements AppLanguage{
    String labelPayableAmount = 'Payable Amount';
    String labelChitDate = 'Chit Date';
 
-   // headings
+   // appbar headings
+   String appBarChitTemplate = 'Chit Template';
+
+   // headings   
    String headingOngoingChits = 'Ongoing Chits';
 
    // input place holder
@@ -39,6 +45,9 @@ class Tamil implements AppLanguage{
    String labelMembers = 'உறுப்பினர்கள்';
    String labelPayableAmount = 'செலுத்த வே. தொகை';
    String labelChitDate = 'சீட்டு தேதி';
+
+   // appbar headings
+   String appBarChitTemplate = 'சீட்டு கட்டமைப்பு';
 
    // headings
    String headingOngoingChits = 'தற்போதைய சீட்டு';

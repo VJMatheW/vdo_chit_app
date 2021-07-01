@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vdo_chit_app/core/data_models/data_models.dart';
-import '../preference_model.dart';
 
+import '../../core/data_models/data_models.dart';
 import '../../core/shared/ui/base_widget.dart';
 import '../../core/shared/ui/ui_widgets.dart';
 import '../../core/shared/ui/widgets/widgets.dart';
 import '../../locator.dart';
-import '../base_model.dart';
 import '../base_model_widget.dart';
+import '../preference_model.dart';
 import 'dashboard_view_model.dart';
 
 class DashboardView extends StatefulWidget {
@@ -17,13 +16,47 @@ class DashboardView extends StatefulWidget {
   _DashboardViewState createState() => _DashboardViewState();
 }
 
-class _DashboardViewState extends State<DashboardView> {
+class _DashboardViewState extends State<DashboardView> with SingleTickerProviderStateMixin {
    bool toggle = true;
+
+   AnimationController animationController;
+   Animation btnChitConfigAnimation, btnMemberAnimation, btnChitAnimation;
+
+   Animation rotationAnimation;
+
+   double getRadianFromDegree(double degree){
+      double unitRadian = 57.295779513;
+      return degree/unitRadian;
+   }
 
    @override
    void initState() {   
+      animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 250));
+      
+      btnChitConfigAnimation = TweenSequence([
+         TweenSequenceItem(tween: Tween<double>(begin: 0.1, end: 1.4), weight: 75),
+         TweenSequenceItem(tween: Tween<double>(begin: 1.4, end: 1.0), weight: 25)
+      ]).animate(animationController);
+      btnMemberAnimation = TweenSequence([
+         TweenSequenceItem(tween: Tween<double>(begin: 0.1, end: 1.4), weight: 55),
+         TweenSequenceItem(tween: Tween<double>(begin: 1.4, end: 1.0), weight: 45)
+      ]).animate(animationController);
+      btnChitAnimation = TweenSequence([
+         TweenSequenceItem(tween: Tween<double>(begin: 0.1, end: 1.4), weight: 35),
+         TweenSequenceItem(tween: Tween<double>(begin: 1.4, end: 1.0), weight: 65)
+      ]).animate(animationController);
+
+      rotationAnimation = Tween<double>(begin: 180, end: 0.0).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOut));
+
+      animationController.addListener(() { setState(() { }); });
       super.initState();
    }
+
+   @override
+   void dispose() {
+       animationController.dispose();
+       super.dispose();
+     }
 
    @override
    Widget build(BuildContext context) {
@@ -33,19 +66,6 @@ class _DashboardViewState extends State<DashboardView> {
          builder: (context){
             return Scaffold(
                backgroundColor: Provider.of<PreferenceModel>(context).theme.background,
-               floatingActionButton: FloatingActionButton(
-                  onPressed: (){
-                     if(toggle){
-                        locator<DashboardViewModel>().setTamilLanguage();
-                        locator<DashboardViewModel>().setDarkTheme();
-                        toggle = false;
-                     }else{
-                        locator<DashboardViewModel>().setEnglishLanguage();
-                        locator<DashboardViewModel>().setRegularTheme();
-                        toggle = true;
-                     }
-                  }, 
-                  child: Icon(Icons.add),),
                appBar: AppBar(
                   backgroundColor: Provider.of<PreferenceModel>(context).theme.primary,
                   actions: <Widget>[
@@ -57,7 +77,7 @@ class _DashboardViewState extends State<DashboardView> {
                   title: Text("Organisation name"),
                ),
                body: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [             
                      // search bar   
                      DashboardSearch(controller: new TextEditingController(),),
@@ -68,7 +88,84 @@ class _DashboardViewState extends State<DashboardView> {
                      // DASHBOARD CARD LIST
                      Expanded( 
                         flex: 1, 
-                        child: DashboardChitList()
+                        child: Stack(
+                           clipBehavior: Clip.none,
+                           children: <Widget>[
+                              DashboardChitList(),
+                              Positioned(
+                                 // the width and height is given because flutter has issues with transform.translate
+                                 // https://github.com/flutter/flutter/issues/27587#issuecomment-482814804
+                                 width: 125 , // btnChitConfigAnimation.value * 125 > 50 ? btnChitConfigAnimation.value * 125 : 50,
+                                 height: 125, // btnChitConfigAnimation.value * 125 > 50 ? btnChitConfigAnimation.value * 125 : 50,
+                                 bottom: 20,
+                                 right: 20,
+                                 child: Stack(
+                                    alignment: Alignment.bottomRight,
+                                    children: [
+                                       Transform.translate(
+                                          offset: Offset.fromDirection(getRadianFromDegree(184), btnChitAnimation.value * 80),
+                                          child: Transform(
+                                             alignment: Alignment.center,
+                                             transform: Matrix4.rotationZ(getRadianFromDegree(rotationAnimation.value))..scale(btnChitAnimation.value),
+                                             child: CircularButton(
+                                                width: 40,
+                                                height: 40,
+                                                color: Colors.white,
+                                                icon: Icon(Icons.file_copy),
+                                                onClick: ()=>{ print('add chit clicked') },
+                                             ),
+                                          ),
+                                       ),
+                                       Transform.translate(
+                                          offset: Offset.fromDirection(getRadianFromDegree(223), btnMemberAnimation.value * 80),
+                                          child: Transform(
+                                             alignment: Alignment.center,
+                                             transform: Matrix4.rotationZ(getRadianFromDegree(rotationAnimation.value))..scale(btnMemberAnimation.value),
+                                             child: CircularButton(
+                                                width: 40,
+                                                height: 40,
+                                                color: Colors.purple,
+                                                icon: Icon(Icons.person_add),
+                                                onClick: ()=>{ print('add member clicked') },
+                                             ),
+                                          ),
+                                       ),
+                                       Transform.translate(
+                                          offset: Offset.fromDirection(getRadianFromDegree(265), btnChitConfigAnimation.value * 80),
+                                          child: Transform(
+                                             alignment: Alignment.center,
+                                             transform: Matrix4.rotationZ(getRadianFromDegree(rotationAnimation.value))..scale(btnChitConfigAnimation.value),
+                                             child: CircularButton(
+                                                width: 40,
+                                                height: 40,
+                                                color: Colors.orange,
+                                                icon: Icon(Icons.settings),
+                                                onClick: (){ 
+                                                   print('add chit config clicked');
+                                                   animationController.reverse();
+                                                   Navigator.pushNamed(context, "/chittemplate");
+                                                },
+                                             ),
+                                          ),
+                                       ),
+                                       CircularButton(
+                                          width: 50,
+                                          height: 50,
+                                          color: Colors.red,
+                                          icon: Icon(Icons.add),
+                                          onClick: (){ 
+                                             if(animationController.isCompleted){
+                                                animationController.reverse();
+                                             }else{
+                                                animationController.forward();
+                                             }
+                                          },
+                                       )
+                                    ],
+                                 )
+                              )
+                           ]
+                        )
                            // children: [
                            //    ChitCard(),
                            //    ChitCard(),
