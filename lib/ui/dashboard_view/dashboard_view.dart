@@ -71,7 +71,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                   actions: <Widget>[
                      IconButton(
                         icon: Icon(Icons.settings), 
-                        onPressed: ()=>{ print("open up settings") }
+                        onPressed: (){ print("open up settings"); }
                      )
                   ],
                   title: Text("Organisation name"),
@@ -166,17 +166,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                               )
                            ]
                         )
-                           // children: [
-                           //    ChitCard(),
-                           //    ChitCard(),
-                           //    ChitCard(),
-                           //    ChitCard(),
-                           //    ChitCard(),
-                           //    ChitCard(),
-                           //    ChitCard(),
-                           //    ChitCard(),
-                           // ],
-                        )
+                     )
                   ],
                )
             ); 
@@ -192,12 +182,15 @@ class DashboardSearch extends BaseModelWidget<DashboardViewModel>{
    Widget build(BuildContext context, DashboardViewModel model){
       return Padding(
          padding: const EdgeInsets.only( left: 12.0, right: 12.0, top: 20.0),
-         child: UIWidgets.textInput(
-            context: context,
-            hintText: model.language.hintDashboardSearchMember,
-            controller: controller,
-            model: model,
-            prefixIcon: Icons.search,
+         child: Container(
+            height: 40.0,
+           child: UIWidgets.textInputWithPrefixIcon(
+              context: context,
+              hintText: model.language.hintDashboardSearchMember,
+              controller: controller,
+              model: model,
+              prefixIcon: Icons.search,
+           ),
          )
       );
    }
@@ -230,9 +223,9 @@ class DashboardChitList extends BaseModelWidget<DashboardViewModel> {
                onTap: (){
                   print("Move to next screen");
                },
-               child: Card(
-                  margin: EdgeInsets.only(bottom: 15.0),
-                  elevation: 3.0,
+               child: CustomCard(
+                  // margin: EdgeInsets.only(bottom: 15.0),
+                  // elevation: 3.0,
                   child: Padding(
                      padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
                      child: Column(

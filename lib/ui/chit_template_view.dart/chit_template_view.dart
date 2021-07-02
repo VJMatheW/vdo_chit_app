@@ -22,8 +22,8 @@ class ChitTemplateView extends StatelessWidget {
                   backgroundColor: Provider.of<PreferenceModel>(context).theme.primary,
                   actions: <Widget>[
                      IconButton(
-                        icon: Icon(Icons.add), 
-                        onPressed: ()=>{ print("open up settings") }
+                        icon: Icon(Icons.add, size: 30,), 
+                        onPressed: ()=>{ Navigator.of(context).pushNamed('/addchittemplate') }
                      )
                   ],
                   title: Text(Provider.of<PreferenceModel>(context).language.appBarChitTemplate),

@@ -1,21 +1,22 @@
 import 'dart:io';
 
-import 'package:vdo_chit_app/core/data_models/chit_datamodel.dart';
-import 'package:vdo_chit_app/core/data_models/chit_template_datamodel.dart';
-import 'package:vdo_chit_app/core/data_models/data_models.dart';
+import 'package:vdo_chit_app/core/data_access/data_access.dart';
+
+import '../data_models/chit_datamodel.dart';
+import '../data_models/chit_template_datamodel.dart';
+import '../data_models/data_models.dart';
 
 import '../../locator.dart';
 import '../shared/services/http_service.dart';
 
-class ChitDataAccess{
+class ChitDataAccess extends BaseDataAccess{
    final HttpService _httpClient = locator<HttpService>();
 
    Future<List<ChitInfo>> getActiveChit() async {
       List<ChitInfo> chitInfos = [];
+      
       HttpResponse response = await  _httpClient.get(url: "/chit/active");
-      if(response.statusCode != 200){
-         throw Exception({ "errorCode": response.statusCode, "error": response.body['error'] });
-      }
+      handleResponseCode(response, 200);
 
       var chitArray = response.body["data"] as List;
       

@@ -23,6 +23,17 @@ class UIWidgets {
       );
    }
 
+   static Widget modalHeading(String text, BaseModel model){
+      return Text(
+         text.toUpperCase(),
+         style: TextStyle(
+            fontSize: 20.0,
+            fontWeight: FontWeight.w700,
+            color: model.theme.primary,
+         ),
+      );
+   }
+
    static Widget textInput({
       @required BuildContext context,
       bool autoFocus,
@@ -31,7 +42,7 @@ class UIWidgets {
       TextInputType inputType,
       String suffixText,
       String initialValue,
-      BaseModel model,
+      @required BaseModel model,
       IconData prefixIcon,
    }) {
       return TextFormField(
@@ -43,7 +54,47 @@ class UIWidgets {
          cursorColor: model.theme.secondary,
 
          decoration: InputDecoration(
-            contentPadding: EdgeInsets.all(2),
+            contentPadding: EdgeInsets.only(left: 15),
+            hintStyle: TextStyle(
+               color: model.theme.secondary,
+               fontSize: 15.0,
+               fontWeight: FontWeight.w500,
+            ),
+            focusedBorder: OutlineInputBorder(
+               borderSide: BorderSide(color: model.theme.secondary)
+            ),
+            enabledBorder: OutlineInputBorder(
+               borderSide: BorderSide(color: model.theme.secondary),
+               borderRadius: BorderRadius.all(Radius.circular(3.0)),
+            ),
+            hintText: hintText ??= "",
+            suffixText: suffixText ??= "",
+         ),
+         maxLines: 1,
+      );
+   }
+
+   static Widget textInputWithPrefixIcon({
+      @required BuildContext context,
+      bool autoFocus,
+      TextEditingController controller,
+      String hintText,
+      TextInputType inputType,
+      String suffixText,
+      String initialValue,
+      @required BaseModel model,
+      IconData prefixIcon,
+   }) {
+      return TextFormField(
+         autofocus: autoFocus ??= false,
+         controller: controller,
+         style: TextStyle( fontSize: 17, color: model.theme.secondary ),
+         keyboardType: inputType ??= TextInputType.text,
+         cursorWidth: 1.5,         
+         cursorColor: model.theme.secondary,
+
+         decoration: InputDecoration(
+            contentPadding: EdgeInsets.all(5.0),
             hintStyle: TextStyle(
                color: model.theme.secondary,
                fontSize: 15.0
@@ -71,67 +122,61 @@ class UIWidgets {
    }
 
    static Widget textInputLabel(
-         {@required BuildContext context, @required String label}) {
+         {@required BuildContext context, @required String label, @required BaseModel model}) {
       return Padding(
-         padding: EdgeInsets.fromLTRB(
-         screenAwareSize(0, context),
-         screenAwareSize(10, context),
-         screenAwareSize(7, context),
-         screenAwareSize(3, context),
-         ),
+         padding: EdgeInsets.fromLTRB(0,0,0,5.0),
          child: Text(
-         label ??= "",
-         textAlign: TextAlign.left,
-         style: Theme.of(context).textTheme.headline2.copyWith(
-               fontSize: screenAwareSize(13, context),
-               fontWeight: FontWeight.bold),
-         ),
+            label ??= "",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+               fontSize: 13, 
+               fontWeight: FontWeight.w700, 
+               color: model.theme.primary
+            )
+         )
       );
    }
 
    static Widget buttonSuccess(
-         {BuildContext context, String label, Function onPressed}) {
-      return Padding(
-         padding: EdgeInsets.symmetric(
-         vertical: screenAwareSize(10, context),
-         ),
-         child: MaterialButton(
-         padding: EdgeInsets.all(screenAwareSize(buttonPadding, context)),
-         textColor: Colors.white,
+         {BuildContext context, String label, Function onPressed, @required BaseModel model}) {
+      return MaterialButton(
+         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+         textColor: model.theme.white,
          child: Text(
             label ??= "",
             style: TextStyle(
-               fontSize: screenAwareSize(buttonFontSize, context),
+               fontSize: 15.0,
+               fontWeight: FontWeight.w600,
             ),
          ),
-         color: Theme.of(context).accentColor,
+         color: model.theme.primary,
          disabledColor: Theme.of(context).buttonColor,
          disabledTextColor: Colors.black26,
          onPressed: onPressed,
-         ),
       );
    }
 
    static Widget buttonBasic(
-         {BuildContext context, String label, Function onPressed}) {
-      return Padding(
-         padding: EdgeInsets.symmetric(
-         vertical: screenAwareSize(10, context),
+         {BuildContext context, String label, Function onPressed, @required BaseModel model}) {
+      return MaterialButton(
+         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10.0),
+         textColor: model.theme.primary,
+         shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(3.0)),
+            side: BorderSide(color: model.theme.primary),
          ),
-         child: MaterialButton(
-         padding: EdgeInsets.all(screenAwareSize(buttonPadding, context)),
-         textColor: Colors.black45,
          child: Text(
             label ??= "",
             style: TextStyle(
-               fontSize: screenAwareSize(buttonFontSize, context),
+               fontSize: 15.0,
+               fontWeight: FontWeight.w400,            
             ),
          ),
-         color: Theme.of(context).buttonColor,
+         // color: Theme.of(context).buttonColor,
          disabledColor: Theme.of(context).buttonColor,
          disabledTextColor: Colors.black26,
          onPressed: onPressed,
-         ),
+      
       );
    }
 }

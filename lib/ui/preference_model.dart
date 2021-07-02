@@ -9,7 +9,7 @@ class PreferenceModel extends ChangeNotifier {
 
    PreferenceModel(){
       _theme = RegularTheme();
-      _language = Tamil();
+      _language = English();
    }
 
    CustomColorScheme get theme => _theme;
