@@ -24,6 +24,7 @@ void setupLocator() {
 
    // data access
    locator.registerLazySingleton<ChitDataAccess>(() => ChitDataAccess());
+   locator.registerLazySingleton<ChitTemplateDataAccess>(() => ChitTemplateDataAccess());
 
    // Models
    locator.registerSingleton<PreferenceModel>(PreferenceModel());

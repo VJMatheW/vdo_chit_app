@@ -6,7 +6,7 @@ class Cell extends StatelessWidget {
    
    final label;
    final value;
-   final icon;
+   final IconData icon;
    final isPhoneNumber;
    final BaseModel model;
 

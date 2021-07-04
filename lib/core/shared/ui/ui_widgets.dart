@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../ui/base_model.dart';
-import 'utils.dart';
 
 class UIWidgets {
    static double textFontSize = 15;
@@ -48,7 +47,7 @@ class UIWidgets {
       return TextFormField(
          autofocus: autoFocus ??= false,
          controller: controller,
-         style: TextStyle( fontSize: 17, color: model.theme.secondary ),
+         style: TextStyle( fontSize: 17, color: model.theme.inputText ),
          keyboardType: inputType ??= TextInputType.text,
          cursorWidth: 1.5,         
          cursorColor: model.theme.secondary,
@@ -56,12 +55,12 @@ class UIWidgets {
          decoration: InputDecoration(
             contentPadding: EdgeInsets.only(left: 15),
             hintStyle: TextStyle(
-               color: model.theme.secondary,
+               color: model.theme.inputTextHint,
                fontSize: 15.0,
                fontWeight: FontWeight.w500,
             ),
             focusedBorder: OutlineInputBorder(
-               borderSide: BorderSide(color: model.theme.secondary)
+               borderSide: BorderSide(color: model.theme.primary)
             ),
             enabledBorder: OutlineInputBorder(
                borderSide: BorderSide(color: model.theme.secondary),
@@ -85,13 +84,13 @@ class UIWidgets {
       @required BaseModel model,
       IconData prefixIcon,
    }) {
-      return TextFormField(
+      return TextField(
          autofocus: autoFocus ??= false,
          controller: controller,
-         style: TextStyle( fontSize: 17, color: model.theme.secondary ),
+         style: TextStyle( fontSize: 17, color: model.theme.inputText ),
          keyboardType: inputType ??= TextInputType.text,
          cursorWidth: 1.5,         
-         cursorColor: model.theme.secondary,
+         cursorColor: model.theme.inputTextHint,
 
          decoration: InputDecoration(
             contentPadding: EdgeInsets.all(5.0),
@@ -100,7 +99,7 @@ class UIWidgets {
                fontSize: 15.0
             ),
             focusedBorder: OutlineInputBorder(
-               borderSide: BorderSide(color: model.theme.secondary)
+               borderSide: BorderSide(color: model.theme.primary)
             ),
             enabledBorder: OutlineInputBorder(
                borderSide: BorderSide(color: model.theme.secondary),
@@ -111,7 +110,7 @@ class UIWidgets {
             prefixIcon: Icon(
                prefixIcon,
                size: 20,
-               color: model.theme.primary,
+               color: model.theme.inputTextHint,
             ),
             prefixStyle: TextStyle(
                fontSize: 20,
@@ -145,7 +144,7 @@ class UIWidgets {
          child: Text(
             label ??= "",
             style: TextStyle(
-               fontSize: 15.0,
+               fontSize: 14.0,
                fontWeight: FontWeight.w600,
             ),
          ),
@@ -168,7 +167,7 @@ class UIWidgets {
          child: Text(
             label ??= "",
             style: TextStyle(
-               fontSize: 15.0,
+               fontSize: 14.0,
                fontWeight: FontWeight.w400,            
             ),
          ),

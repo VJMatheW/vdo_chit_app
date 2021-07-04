@@ -17,20 +17,41 @@ class DashboardView extends StatefulWidget {
 }
 
 class _DashboardViewState extends State<DashboardView> with SingleTickerProviderStateMixin {
-   bool toggle = true;
+   bool toggle = false;
 
    AnimationController animationController;
    Animation btnChitConfigAnimation, btnMemberAnimation, btnChitAnimation;
 
    Animation rotationAnimation;
 
+   TextEditingController memberSearchController;
+
+   DashboardViewModel dashboardViewModel = locator<DashboardViewModel>();
+
+   /// search member overlay - req
+   final GlobalKey memberSearchKey = GlobalKey();
+   Size searchMemberSize;
+   Offset searchMemberPosition;   
+   List<Member> suggestedMembers = [];
+   bool showAutocomplete = false;
+
    double getRadianFromDegree(double degree){
       double unitRadian = 57.295779513;
       return degree/unitRadian;
    }
 
+   // used for overlay autocomplete
+   void calculateSizeAndPositionOfMemberSearch(GlobalKey key){
+      WidgetsBinding.instance.addPostFrameCallback((_){ 
+         final RenderBox box = key.currentContext.findRenderObject();
+         searchMemberPosition = box.localToGlobal(Offset.zero);
+         searchMemberSize = box.size;
+      });
+   }
+
    @override
-   void initState() {   
+   void initState() {
+
       animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 250));
       
       btnChitConfigAnimation = TweenSequence([
@@ -49,17 +70,53 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
       rotationAnimation = Tween<double>(begin: 180, end: 0.0).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOut));
 
       animationController.addListener(() { setState(() { }); });
+
+      // get and set position and size of search container for autocomplete
+      calculateSizeAndPositionOfMemberSearch(memberSearchKey);
+
+      /// member search text controller 
+      memberSearchController = TextEditingController();
+      memberSearchController.addListener((){         
+         String query = memberSearchController.text;
+         /// when search text is empty,
+         /// hide overlay
+         if(query == ""){
+            setState(() { showAutocomplete = false; });
+            return;
+         }
+
+         /// when search text is not empty, show overlay
+         suggestedMembers = dashboardViewModel.searchMember(query);
+         if(dashboardViewModel.suggestedMembers.length > 0){
+            if(overlayEntries.length > 0){
+               overlayEntries[0].markNeedsBuild();
+            }
+            setState(() { showAutocomplete = true; });
+         }else{
+            setState(() { showAutocomplete = false; });
+         }
+      });
+
       super.initState();
    }
 
    @override
    void dispose() {
-       animationController.dispose();
-       super.dispose();
-     }
+      animationController.dispose();
+      memberSearchController.dispose();
+      super.dispose();
+   }
+
+   OverlayEntry overlayEntry;
+   OverlayState overlayState;
+   List<OverlayEntry> overlayEntries = [];
 
    @override
    Widget build(BuildContext context) {
+      /// set up search autocomplete
+      setUpSearchMemberAutoComplete(context);
+
+      /// actual dashboard view 
       return BaseWidget(
          viewModel: locator<DashboardViewModel>(),
          onModelReady: (model)=> model.init(),
@@ -70,8 +127,18 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                   backgroundColor: Provider.of<PreferenceModel>(context).theme.primary,
                   actions: <Widget>[
                      IconButton(
-                        icon: Icon(Icons.settings), 
-                        onPressed: (){ print("open up settings"); }
+                        icon: Icon(Icons.language), 
+                        onPressed: (){ 
+                           if(toggle){
+                              locator<DashboardViewModel>().setEnglishLanguage();
+                              setState(() {});
+                              toggle = false;
+                           }else{
+                              locator<DashboardViewModel>().setTamilLanguage();
+                              toggle = true;
+                              setState(() {});
+                           }
+                        }
                      )
                   ],
                   title: Text("Organisation name"),
@@ -80,7 +147,10 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [             
                      // search bar   
-                     DashboardSearch(controller: new TextEditingController(),),
+                     DashboardSearch(
+                        controller: memberSearchController, 
+                        memberSearchkey: memberSearchKey
+                     ),
                      
                      // heading
                      DashboardHeading(),
@@ -91,7 +161,10 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                         child: Stack(
                            clipBehavior: Clip.none,
                            children: <Widget>[
+                              // List
                               DashboardChitList(),
+
+                              // Custom FAB button
                               Positioned(
                                  // the width and height is given because flutter has issues with transform.translate
                                  // https://github.com/flutter/flutter/issues/27587#issuecomment-482814804
@@ -110,8 +183,8 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                              child: CircularButton(
                                                 width: 40,
                                                 height: 40,
-                                                color: Colors.white,
-                                                icon: Icon(Icons.file_copy),
+                                                color: Provider.of<PreferenceModel>(context).theme.primary,
+                                                icon: Icon(Icons.file_copy, color: Colors.white,),
                                                 onClick: ()=>{ print('add chit clicked') },
                                              ),
                                           ),
@@ -124,8 +197,8 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                              child: CircularButton(
                                                 width: 40,
                                                 height: 40,
-                                                color: Colors.purple,
-                                                icon: Icon(Icons.person_add),
+                                                color: Provider.of<PreferenceModel>(context).theme.primary,
+                                                icon: Icon(Icons.person_add, color: Colors.white,),
                                                 onClick: ()=>{ print('add member clicked') },
                                              ),
                                           ),
@@ -138,8 +211,8 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                              child: CircularButton(
                                                 width: 40,
                                                 height: 40,
-                                                color: Colors.orange,
-                                                icon: Icon(Icons.settings),
+                                                color: Provider.of<PreferenceModel>(context).theme.primary,
+                                                icon: Icon(Icons.settings, color: Colors.white,),
                                                 onClick: (){ 
                                                    print('add chit config clicked');
                                                    animationController.reverse();
@@ -151,8 +224,8 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                        CircularButton(
                                           width: 50,
                                           height: 50,
-                                          color: Colors.red,
-                                          icon: Icon(Icons.add),
+                                          color: Provider.of<PreferenceModel>(context).theme.primary,
+                                          icon: Icon(Icons.add, color: Colors.white,),
                                           onClick: (){ 
                                              if(animationController.isCompleted){
                                                 animationController.reverse();
@@ -173,24 +246,67 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
          } // builder function
       );
    }
+
+   void setUpSearchMemberAutoComplete(BuildContext context){
+      if(overlayState == null){
+         overlayState = Overlay.of(context);
+      }
+
+      if(showAutocomplete){
+         Future.delayed(Duration.zero, (){
+            if(overlayEntries.length > 0){
+               return;
+            }
+            overlayEntry = OverlayEntry(builder: (context){
+               return Positioned(
+                  top: searchMemberPosition.dy + searchMemberSize.height ?? 0,
+                  left: searchMemberPosition.dx ?? 0,
+                  child: Container(
+                     constraints: BoxConstraints(maxHeight: (MediaQuery.of(context).size.height /100) * 40, minHeight: 0),
+                     color: Colors.black12,
+                     width: searchMemberSize.width,
+                     child: Material(
+                        color: Colors.transparent,
+                        child: DashboardMemberSuggestions(suggestedMembers: suggestedMembers,),
+                     ),
+                  ),
+               );
+            });
+            overlayEntries = [overlayEntry];
+            
+            overlayState.insertAll(overlayEntries);
+         });
+      }else{
+         Future.delayed(Duration.zero, (){
+            if(overlayEntries.length > 0){
+               overlayEntries[0].remove();
+               overlayEntries = [];
+            }
+         });         
+      }
+   }
 }
 
 class DashboardSearch extends BaseModelWidget<DashboardViewModel>{
    final TextEditingController controller;
-   DashboardSearch({ @required this.controller});
+   final Key memberSearchkey;
+   
+   DashboardSearch({ @required this.controller, @required this.memberSearchkey });
+
    @override
    Widget build(BuildContext context, DashboardViewModel model){
       return Padding(
          padding: const EdgeInsets.only( left: 12.0, right: 12.0, top: 20.0),
          child: Container(
+            key: memberSearchkey,
             height: 40.0,
-           child: UIWidgets.textInputWithPrefixIcon(
-              context: context,
-              hintText: model.language.hintDashboardSearchMember,
-              controller: controller,
-              model: model,
-              prefixIcon: Icons.search,
-           ),
+            child: UIWidgets.textInputWithPrefixIcon(
+               context: context,
+               hintText: model.language.hintDashboardSearchMember,
+               controller: controller,
+               model: model,
+               prefixIcon: Icons.search,
+            ),
          )
       );
    }
@@ -203,6 +319,58 @@ class DashboardHeading extends BaseModelWidget<DashboardViewModel>{
          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
          child: UIWidgets.heading(model.language.headingOngoingChits, model)
       );
+   }
+}
+
+class DashboardMemberSuggestions extends StatelessWidget{
+
+   final List<Member> suggestedMembers;
+   DashboardMemberSuggestions({ @required this.suggestedMembers });
+
+   @override
+   Widget build(BuildContext context) {
+      DashboardViewModel model = locator<DashboardViewModel>();
+      return ListView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.only(left: 5.0, right: 5.0, top: 5.0),
+            physics: BouncingScrollPhysics(),
+            itemCount: suggestedMembers.length,
+            itemBuilder: (context, index){
+               Member member = suggestedMembers[index];
+               return GestureDetector(
+                  onTap: (){
+                     print('Navigate to member page');
+                  },
+                  child: CustomCard(
+                     bottomMargin: 5.0,
+                     model: model,
+                     child: Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Column(
+                           crossAxisAlignment: CrossAxisAlignment.start,
+                           children: [
+                              // Member name in bold
+                              Text(member.name,
+                                 style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                    color: model.theme.black
+                                 ),
+                              ),
+                              // phone number small
+                              Text(member.phone,
+                                 style: TextStyle(
+                                    fontSize: 10,
+                                    color: model.theme.black
+                                 ),
+                              )
+                           ],
+                        ),
+                     ),
+                  ),
+               );
+            }
+         );
    }
 }
 
@@ -224,6 +392,7 @@ class DashboardChitList extends BaseModelWidget<DashboardViewModel> {
                   print("Move to next screen");
                },
                child: CustomCard(
+                  model: model,
                   // margin: EdgeInsets.only(bottom: 15.0),
                   // elevation: 3.0,
                   child: Padding(

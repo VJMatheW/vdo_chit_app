@@ -1,16 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:vdo_chit_app/core/shared/ui/base_widget.dart';
-import 'package:vdo_chit_app/core/shared/ui/ui_widgets.dart';
-import 'package:vdo_chit_app/locator.dart';
-import 'package:vdo_chit_app/ui/add_chit_template_view.dart/add_chit_template_view_model.dart';
-import 'package:vdo_chit_app/ui/preference_model.dart';
 
+import '../../core/shared/ui/base_widget.dart';
+import '../../core/shared/ui/ui_widgets.dart';
+import '../../locator.dart';
 import '../base_model_widget.dart';
+import '../preference_model.dart';
+import 'add_chit_template_view_model.dart';
 
-class AddChitTemplateView extends StatelessWidget {
+class AddChitTemplateView extends StatefulWidget {
   const AddChitTemplateView({ Key key }) : super(key: key);
+
+  @override
+  _AddChitTemplateViewState createState() => _AddChitTemplateViewState();
+}
+
+class _AddChitTemplateViewState extends State<AddChitTemplateView> {
+
+   TextEditingController _amountController, _percentageController, _memberCountController;
+
+   @override
+   void initState(){
+      _amountController = TextEditingController();
+      _percentageController = TextEditingController();
+      _memberCountController = TextEditingController();
+      super.initState();
+   }
+
+   @override
+   void dispose() {
+      _amountController.dispose();
+      _percentageController.dispose();
+      _memberCountController.dispose();
+      super.dispose();
+   }
 
    @override
    Widget build(BuildContext context) {
@@ -18,55 +42,58 @@ class AddChitTemplateView extends StatelessWidget {
          viewModel: locator<AddChitTemplateViewModel>(),
          onModelReady: (model)=> model.init(),
          builder: (context){
-            return Container(
-               margin: EdgeInsets.only(top: 200),
-               child: SingleChildScrollView( // for bottom constraint
-                  child: Padding(
-                     padding: EdgeInsets.symmetric(horizontal: 12),
-                     child: Material(
-                        child: Container(  // to fill in width 100%
-                           width: double.infinity,
-                           child: Stack(
-                              children: [
-                                 Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                    child: Column(
-                                       children: [                                    
-                                          SizedBox(height: 30,),
-                                          AddChitTemplateHeading(),
-                                          SizedBox(height: 25,),
-                                          ChitAmountInputField(),
-                                          SizedBox(height: 20,),
-                                          ChitPercentageInputField(),
-                                          SizedBox(height: 20,),
-                                          ChitMembersCountInputField(),
-                                          SizedBox(height: 30,),
-                                          ActionButtons(),
-                                          SizedBox(height: 30,),
-                                       ],                                   
+            return Material(
+               color: Colors.transparent,
+               child: Scaffold(
+                  backgroundColor: Colors.transparent,
+                  body: Container(
+                     margin: EdgeInsets.only(
+                        top: (MediaQuery.of(context).size.height / 100) * 15,
+                        left: 12,
+                        right: 12,
+                     ),
+                     color: Colors.white,
+                     child: SingleChildScrollView(
+                        child: Stack(
+                           children: [
+                              Positioned(
+                                 right: 0,
+                                 top: 0,
+                                 child: Transform(
+                                    alignment: Alignment.center,
+                                    transform: Matrix4.rotationZ( 0.785398)..translate(0.0, -7.0, 3.0),
+                                    child: IconButton(
+                                       icon: Icon(
+                                          Icons.add,
+                                          color: Provider.of<PreferenceModel>(context).theme.primary,
+                                          size: 30,
+                                       ),
+                                       onPressed: (){ 
+                                          Navigator.of(context).pop();
+                                       },
                                     ),
                                  ),
-                                 
-                                 // Close button
-                                 Positioned(
-                                    right: 0,
-                                    child: Transform(
-                                       alignment: Alignment.center,
-                                       transform: Matrix4.rotationZ(0.785398),
-                                      child: IconButton(
-                                         icon: Icon(
-                                            Icons.add,
-                                            color: Provider.of<PreferenceModel>(context).theme.primary,
-                                            size: 30,
-                                            ), 
-                                         onPressed: (){ 
-                                            Navigator.of(context).pop();
-                                         },
-                                      ),
-                                    ),
+                              ),
+                              Padding(
+                                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                 child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [                                                        
+                                       SizedBox(height: 30,),
+                                       AddChitTemplateHeading(),
+                                       SizedBox(height: 25,),
+                                       ChitAmountInputField(),
+                                       SizedBox(height: 20,),
+                                       ChitPercentageInputField(),
+                                       SizedBox(height: 20,),
+                                       ChitMembersCountInputField(),
+                                       SizedBox(height: 30,),
+                                       ActionButtons(),
+                                       SizedBox(height: 30,),
+                                    ],
                                  ),
-                              ]
-                           ),
+                              )
+                           ]
                         ),
                      ),
                   ),
@@ -154,54 +181,24 @@ class ActionButtons extends BaseModelWidget<AddChitTemplateViewModel>{
          children: [            
             Expanded(
                flex: 1,
-               child: Padding(
-                  padding: const EdgeInsets.only(right: 0.0, left: 30.0),
-                  child: UIWidgets.buttonBasic(
-                     model: model, 
-                     context: context, 
-                     label: model.language.buttonCancel,
-                     onPressed: (){}
-                  ),
+               child: UIWidgets.buttonBasic(
+                  model: model, 
+                  context: context, 
+                  label: model.language.buttonCancel,
+                  onPressed: (){}
                )
             ),
             SizedBox(width: 10,),
             Expanded(
                flex: 1,
-               child: Padding(
-                  padding: const EdgeInsets.only(right: 30.0, left: 0.0),
-                  child: UIWidgets.buttonSuccess(
-                     model: model, 
-                     context: context, 
-                     label: model.language.buttonCreate,
-                     onPressed: (){}
-                  ),
+               child: UIWidgets.buttonSuccess(
+                  model: model, 
+                  context: context, 
+                  label: model.language.buttonCreate,
+                  onPressed: (){}
                )
             ),
          ],
       );
    }
-}
-
-class ConstrainedView extends StatelessWidget{
-   ConstrainedView({
-      Key key,
-      @required this.child,
-      this.width = 250.0
-   }) : super(key : key);
-
-   final Widget child;
-   final double width; 
-   
-   @override
-   Widget build(BuildContext context) {
-      return LayoutBuilder(
-         builder: (context, constraints){
-            if(constraints.maxWidth < width || constraints.maxHeight < 300){
-               return const Text('');
-            }
-            return child;
-         }
-      );  
-   }
-
 }

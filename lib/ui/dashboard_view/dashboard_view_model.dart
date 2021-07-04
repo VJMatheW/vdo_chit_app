@@ -11,9 +11,45 @@ class DashboardViewModel extends BaseModel{
    ChitDataAccess chitDataAccess = locator<ChitDataAccess>();
    
    List<ChitInfo> chitsInfo = [];
+   List<Member> suggestedMembers = [];
+
+   bool showOverlay = false;
 
    void init(){
       getActiveChits();
+   }
+
+   void displayOverlay(){
+      showOverlay = true;
+      notifyListeners();
+   }
+   void hideOverlay(){
+      showOverlay = false;
+      notifyListeners();
+   }
+
+   List<Member> searchMember(String query){
+      print("Received SearchMember query : $query");
+      query = query.trim().toLowerCase();      
+      List<Member> members = [
+         Member(name: 'Vijay', phone: '9042307071'),
+         Member(name: 'Meenakshi', phone: '9840941369'),
+         Member(name: 'Prabhu', phone: '9952104432'),
+         Member(name: 'Gopi', phone: '9952704120'),
+         Member(name: 'Ravi', phone: '9894228324'),
+         Member(name: 'Srinivasan', phone: '9444722757'),
+      ];
+
+      if(query == ""){
+         suggestedMembers = [];
+      }else{
+         suggestedMembers = members.where((member){
+            return member.name.toLowerCase().contains(query) || member.phone.toLowerCase().contains(query);
+         }).toList();
+
+         print('Matched member count ${suggestedMembers.length}');
+      }
+      return suggestedMembers;
    }
 
    void getActiveChits() async {
