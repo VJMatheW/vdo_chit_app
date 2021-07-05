@@ -13,6 +13,8 @@ abstract class AppLanguage{
 
    // appbar headings
    String appBarChitTemplate;
+   String appBarChit;
+   String appBarMember;
 
    // headings
    String headingOngoingChits;
@@ -47,6 +49,8 @@ class English implements AppLanguage{
 
    // appbar headings
    String appBarChitTemplate = 'Chit Template';
+   String appBarChit = 'Chit';
+   String appBarMember = 'Member';
 
    // headings   
    String headingOngoingChits = 'Ongoing Chits';
@@ -80,9 +84,12 @@ class Tamil implements AppLanguage{
 
    // appbar headings
    String appBarChitTemplate = 'சீட்டு கட்டமைப்பு';
+   String appBarChit = 'சீட்டு';
+   String appBarMember = 'உறுப்பினர்கள்';
 
    // headings
    String headingOngoingChits = 'தற்போதைய சீட்டு';
+
 
    // modal popup headings
    String modalHeadingAddChitTemplate = 'புதிய சீட்டு கட்டமைப்பு';

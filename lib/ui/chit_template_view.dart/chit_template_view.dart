@@ -1,14 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
-import 'package:vdo_chit_app/core/data_models/chit_template_datamodel.dart';
-import 'package:vdo_chit_app/core/shared/ui/base_widget.dart';
-import 'package:vdo_chit_app/core/shared/ui/widgets/widgets.dart';
-import 'package:vdo_chit_app/locator.dart';
-import 'package:vdo_chit_app/ui/base_model_widget.dart';
-import 'package:vdo_chit_app/ui/chit_template_view.dart/chit_template_view_model.dart';
 
-import '../preference_model.dart';
+import '../../core/data_models/chit_template_datamodel.dart';
+import '../../core/enums_and_variables/info_state.dart';
+import '../../core/shared/ui/base_widget.dart';
+import '../../core/shared/ui/widgets/widgets.dart';
+import '../../locator.dart';
+import '../base_model_widget.dart';
+import 'chit_template_view_model.dart';
 
 class ChitTemplateView extends StatelessWidget {
    const ChitTemplateView({ Key key }) : super(key: key);
@@ -18,22 +18,24 @@ class ChitTemplateView extends StatelessWidget {
       return BaseWidget(
          viewModel: locator<ChitTemplateViewModel>(),
          onModelReady: (model)=> model.init(),
-         builder: (context){
+         builder: (context, ChitTemplateViewModel model, child){
             return Scaffold(
-               backgroundColor: Provider.of<PreferenceModel>(context).theme.background,
+               backgroundColor: model.theme.background,
                appBar: AppBar(
-                  backgroundColor: Provider.of<PreferenceModel>(context).theme.primary,
+                  backgroundColor: model.theme.primary,
                   actions: <Widget>[
                      IconButton(
                         icon: Icon(Icons.add, size: 30,), 
                         onPressed: ()=>{ Navigator.of(context).pushNamed('/addchittemplate') }
                      )
                   ],
-                  title: Text(Provider.of<PreferenceModel>(context).language.appBarChitTemplate),
+                  title: Text(model.language.appBarChitTemplate),
                ),
                body: Padding(
                   padding: EdgeInsets.symmetric(vertical: 15.0),
-                  child: ChitTemplateList(),
+                  child: model.state == ViewState.Busy
+                     ? Center(child: CupertinoActivityIndicator(),)
+                     : ChitTemplateList(),
                )
             );
          }

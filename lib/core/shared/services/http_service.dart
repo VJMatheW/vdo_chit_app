@@ -25,9 +25,10 @@ class HttpService {
       return HttpResponse(response.statusCode, response.body);
    }
 
-   Future<HttpResponse> post({ @required String url, Map<String, String> headers = header, Object body }) async{
+   Future<HttpResponse> post({ @required String url, Map<String, String> headers = header, @required Object body }) async{
       print("POST $baseUrl$url");
-      final response = await httpClient.post(Uri.dataFromString("$baseUrl$url"), body: body, headers: headers);
+      HttpRequest httpRequest = HttpRequest("$baseUrl$url", body);
+      final response = await httpClient.post(httpRequest.url, body: httpRequest.body, headers: headers);
       return HttpResponse(response.statusCode, response.body);
    }
 }
@@ -36,10 +37,24 @@ class HttpResponse{
    int _statusCode;
    Map<String, dynamic> _body;
 
-   HttpResponse(this._statusCode, body){
+   HttpResponse(int statusCode,String body){      
+      _statusCode = statusCode;
       _body = jsonDecode(body);
    }
 
    int get statusCode => _statusCode;
    Map<String, dynamic> get body => _body;
+}
+
+class HttpRequest{
+   Uri _url;
+   String _jsonBodyString;
+
+   HttpRequest(String url, Object body){
+      _url = Uri.parse(url);
+      _jsonBodyString = jsonEncode(body);
+   }
+
+   Uri get url => _url;
+   String get body => _jsonBodyString;
 }

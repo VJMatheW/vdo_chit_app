@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BaseWidget<T extends ChangeNotifier> extends StatefulWidget {
-	final Widget Function(BuildContext) builder;
+	final Widget Function(BuildContext context, T model, Widget child) builder;
 	final Function(T) onModelReady;
 	final T viewModel;
 
@@ -30,7 +30,10 @@ class _BaseWidgetState<T extends ChangeNotifier> extends State<BaseWidget<T>> {
 	Widget build(BuildContext context) {
 		return ChangeNotifierProvider(
 			create: (context) => _model,
-			child: widget.builder(context),
+         child: Consumer(
+            builder: widget.builder
+         ),
+			// child: widget.builder(context),
 		);
 	}
 }

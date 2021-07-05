@@ -6,16 +6,16 @@ class CustomCard extends StatelessWidget {
 
    final BaseModel model;
    final Widget child;
-   double bottomMargin;
+   CustomCardGestures customCardGestures;
+   final double bottomMargin;
    
-   CustomCard({ Key key, this.model, this.child, this.bottomMargin = 15.0 }) : super(key: key);
+   CustomCard({ Key key, this.model, this.child, this.bottomMargin = 15.0, this.customCardGestures }) : super(key: key);
 
    @override
    Widget build(BuildContext context) {
       return Container(
-         margin: EdgeInsets.only(bottom: bottomMargin),
-         // elevation: 3.0,
-         decoration: BoxDecoration(
+        margin: EdgeInsets.only(bottom: bottomMargin),
+        decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(3.0)),
             boxShadow: [
@@ -27,7 +27,24 @@ class CustomCard extends StatelessWidget {
                )
             ]
          ),
-         child: child,
+         child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+               onTap: customCardGestures?.onTap,
+               onLongPress: customCardGestures?.onLongPress,
+               child: Container(
+                  color: Colors.transparent,
+                  child: child
+               ),
+            ),
+         ),
       );
    }
+}
+
+class CustomCardGestures{
+   Function onTap;
+   Function onLongPress;
+
+   CustomCardGestures({ this.onTap, this.onLongPress});
 }

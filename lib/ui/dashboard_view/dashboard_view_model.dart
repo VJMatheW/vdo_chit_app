@@ -13,19 +13,8 @@ class DashboardViewModel extends BaseModel{
    List<ChitInfo> chitsInfo = [];
    List<Member> suggestedMembers = [];
 
-   bool showOverlay = false;
-
    void init(){
       getActiveChits();
-   }
-
-   void displayOverlay(){
-      showOverlay = true;
-      notifyListeners();
-   }
-   void hideOverlay(){
-      showOverlay = false;
-      notifyListeners();
    }
 
    List<Member> searchMember(String query){

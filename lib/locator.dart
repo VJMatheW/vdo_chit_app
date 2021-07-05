@@ -6,7 +6,7 @@ import 'core/shared/services/contacts_service.dart';
 import 'core/shared/services/http_service.dart';
 import 'core/shared/services/permission_service.dart';
 import 'core/shared/services/preference_service.dart';
-import 'ui/add_chit_template_view.dart/add_chit_template_view_model.dart';
+
 import 'ui/chit_template_view.dart/chit_template_view_model.dart';
 import 'ui/dashboard_view/dashboard_view_model.dart';
 import 'ui/preference_model.dart';
@@ -32,5 +32,4 @@ void setupLocator() {
    // View Models
    locator.registerLazySingleton<DashboardViewModel>(() => DashboardViewModel());
    locator.registerLazySingleton<ChitTemplateViewModel>(() => ChitTemplateViewModel());
-   locator.registerFactory(() => AddChitTemplateViewModel());
 }

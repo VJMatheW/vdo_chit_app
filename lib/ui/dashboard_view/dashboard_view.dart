@@ -1,13 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/painting.dart';
 
 import '../../core/data_models/data_models.dart';
+import '../../core/enums_and_variables/info_state.dart';
 import '../../core/shared/ui/base_widget.dart';
 import '../../core/shared/ui/ui_widgets.dart';
 import '../../core/shared/ui/widgets/widgets.dart';
 import '../../locator.dart';
 import '../base_model_widget.dart';
-import '../preference_model.dart';
 import 'dashboard_view_model.dart';
 
 class DashboardView extends StatefulWidget {
@@ -21,7 +22,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
 
    AnimationController animationController;
    Animation btnChitConfigAnimation, btnMemberAnimation, btnChitAnimation;
-
+   Animation opacityAnimation;
    Animation rotationAnimation;
 
    TextEditingController memberSearchController;
@@ -68,6 +69,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
       ]).animate(animationController);
 
       rotationAnimation = Tween<double>(begin: 180, end: 0.0).animate(CurvedAnimation(parent: animationController, curve: Curves.easeOut));
+      opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(animationController);
 
       animationController.addListener(() { setState(() { }); });
 
@@ -120,23 +122,21 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
       return BaseWidget(
          viewModel: locator<DashboardViewModel>(),
          onModelReady: (model)=> model.init(),
-         builder: (context){
+         builder: (context, DashboardViewModel model, child){
             return Scaffold(
-               backgroundColor: Provider.of<PreferenceModel>(context).theme.background,
+               backgroundColor: model.theme.background,
                appBar: AppBar(
-                  backgroundColor: Provider.of<PreferenceModel>(context).theme.primary,
+                  backgroundColor: model.theme.primary,
                   actions: <Widget>[
                      IconButton(
                         icon: Icon(Icons.language), 
                         onPressed: (){ 
                            if(toggle){
-                              locator<DashboardViewModel>().setEnglishLanguage();
-                              setState(() {});
+                              model.setEnglishLanguage();
                               toggle = false;
                            }else{
-                              locator<DashboardViewModel>().setTamilLanguage();
+                              model.setTamilLanguage();
                               toggle = true;
-                              setState(() {});
                            }
                         }
                      )
@@ -158,73 +158,158 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                      // DASHBOARD CARD LIST
                      Expanded( 
                         flex: 1, 
-                        child: Stack(
-                           clipBehavior: Clip.none,
+                        child: model.state == ViewState.Busy 
+                        ? Center(child: CupertinoActivityIndicator())
+                        : Stack(
+                           // clipBehavior: Clip.none,
                            children: <Widget>[
                               // List
-                              DashboardChitList(),
+                              DashboardChitList(dashboardDispose: dashboardDispose ),
 
                               // Custom FAB button
                               Positioned(
                                  // the width and height is given because flutter has issues with transform.translate
                                  // https://github.com/flutter/flutter/issues/27587#issuecomment-482814804
-                                 width: 125 , // btnChitConfigAnimation.value * 125 > 50 ? btnChitConfigAnimation.value * 125 : 50,
-                                 height: 125, // btnChitConfigAnimation.value * 125 > 50 ? btnChitConfigAnimation.value * 125 : 50,
+                                 width: 100 , // btnChitConfigAnimation.value * 125 > 50 ? btnChitConfigAnimation.value * 125 : 50,
+                                 height: MediaQuery.of(context).size.height, // btnChitConfigAnimation.value * 125 > 50 ? btnChitConfigAnimation.value * 125 : 50,
                                  bottom: 20,
                                  right: 20,
                                  child: Stack(
                                     alignment: Alignment.bottomRight,
                                     children: [
                                        Transform.translate(
-                                          offset: Offset.fromDirection(getRadianFromDegree(184), btnChitAnimation.value * 80),
-                                          child: Transform(
-                                             alignment: Alignment.center,
-                                             transform: Matrix4.rotationZ(getRadianFromDegree(rotationAnimation.value))..scale(btnChitAnimation.value),
-                                             child: CircularButton(
-                                                width: 40,
-                                                height: 40,
-                                                color: Provider.of<PreferenceModel>(context).theme.primary,
-                                                icon: Icon(Icons.file_copy, color: Colors.white,),
-                                                onClick: ()=>{ print('add chit clicked') },
-                                             ),
+                                          offset: Offset.fromDirection(getRadianFromDegree(268), btnChitAnimation.value * 190),
+                                          child: Stack(
+                                             clipBehavior: Clip.none,
+                                             alignment: Alignment.bottomCenter,                                             
+                                             children: [
+                                                /// ADD CHIT BUTTON label
+                                                Positioned(
+                                                   bottom: -15.0,
+                                                   child: opacityAnimation.value != 1.0 ? SizedBox.shrink() : Container(
+                                                      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                      decoration: BoxDecoration(
+                                                         borderRadius: BorderRadius.circular(3.0),
+                                                         color: model.theme.primary,
+                                                      ),
+                                                      child: Text(model.language.appBarChit, 
+                                                         textAlign: TextAlign.center,
+                                                         style: TextStyle(
+                                                            color: model.theme.white,      
+                                                            fontSize: opacityAnimation.value * 7,
+                                                            fontWeight: FontWeight.bold,
+                                                         ),
+                                                      ),
+                                                   )
+                                                ),
+                                                /// ADD CHIT BUTTON
+                                                Transform(
+                                                   alignment: Alignment.center,
+                                                   transform: Matrix4.rotationZ(getRadianFromDegree(rotationAnimation.value))..scale(btnChitAnimation.value),
+                                                   child: CircularButton(
+                                                      width: 40,
+                                                      height: 40,
+                                                      color: model.theme.primary,
+                                                      icon: Icon(Icons.file_copy, color: Colors.white,),
+                                                      onClick: (){ 
+                                                         dashboardDispose();
+                                                         print('add chit clicked'); 
+                                                      },
+                                                   ),
+                                                ),
+                                             ],
                                           ),
                                        ),
                                        Transform.translate(
-                                          offset: Offset.fromDirection(getRadianFromDegree(223), btnMemberAnimation.value * 80),
-                                          child: Transform(
-                                             alignment: Alignment.center,
-                                             transform: Matrix4.rotationZ(getRadianFromDegree(rotationAnimation.value))..scale(btnMemberAnimation.value),
-                                             child: CircularButton(
-                                                width: 40,
-                                                height: 40,
-                                                color: Provider.of<PreferenceModel>(context).theme.primary,
-                                                icon: Icon(Icons.person_add, color: Colors.white,),
-                                                onClick: ()=>{ print('add member clicked') },
-                                             ),
+                                          offset: Offset.fromDirection(getRadianFromDegree(267), btnMemberAnimation.value * 130),
+                                          child: Stack(
+                                             clipBehavior: Clip.none,
+                                             alignment: Alignment.bottomCenter,
+                                             children: [
+                                                /// ADD MEMBER BUTTON label
+                                                Positioned(
+                                                   bottom: -15.0,
+                                                   child: opacityAnimation.value != 1.0 ? SizedBox.shrink() : Container(
+                                                      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                      decoration: BoxDecoration(
+                                                         borderRadius: BorderRadius.circular(3.0),
+                                                         color: model.theme.primary,
+                                                      ),
+                                                      child: Text(model.language.appBarMember, 
+                                                         textAlign: TextAlign.center,
+                                                         style: TextStyle(
+                                                            color: model.theme.white,      
+                                                            fontSize: opacityAnimation.value * 7,
+                                                            fontWeight: FontWeight.bold,
+                                                         ),
+                                                      ),
+                                                   )
+                                                ),
+                                                /// ADD MEMBER BUTTON
+                                                Transform(
+                                                   alignment: Alignment.center,
+                                                   transform: Matrix4.rotationZ(getRadianFromDegree(rotationAnimation.value))..scale(btnMemberAnimation.value),
+                                                   child: CircularButton(
+                                                      width: 40,
+                                                      height: 40,
+                                                      color: model.theme.primary,
+                                                      icon: Icon(Icons.person_add, color: Colors.white,),
+                                                      onClick: (){ 
+                                                         dashboardDispose();
+                                                         // Navigator.pushNamed(context, "/chittemplate");
+                                                      },
+                                                   ),
+                                                ),
+                                             ],
                                           ),
                                        ),
                                        Transform.translate(
-                                          offset: Offset.fromDirection(getRadianFromDegree(265), btnChitConfigAnimation.value * 80),
-                                          child: Transform(
-                                             alignment: Alignment.center,
-                                             transform: Matrix4.rotationZ(getRadianFromDegree(rotationAnimation.value))..scale(btnChitConfigAnimation.value),
-                                             child: CircularButton(
-                                                width: 40,
-                                                height: 40,
-                                                color: Provider.of<PreferenceModel>(context).theme.primary,
-                                                icon: Icon(Icons.settings, color: Colors.white,),
-                                                onClick: (){ 
-                                                   print('add chit config clicked');
-                                                   animationController.reverse();
-                                                   Navigator.pushNamed(context, "/chittemplate");
-                                                },
-                                             ),
+                                          offset: Offset.fromDirection(getRadianFromDegree(265), btnChitConfigAnimation.value * 70),
+                                          child: Stack( 
+                                             clipBehavior: Clip.none,
+                                             alignment: Alignment.bottomCenter,
+                                             children: [
+                                                /// ADD CHIT TEMPLATE BUTTON label
+                                                Positioned(
+                                                   bottom: -15.0,
+                                                   child: opacityAnimation.value != 1.0 ? SizedBox.shrink() : Container(
+                                                      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                      decoration: BoxDecoration(
+                                                         borderRadius: BorderRadius.circular(3.0),
+                                                         color: model.theme.primary,
+                                                      ),
+                                                      child: Text(model.language.appBarChitTemplate, 
+                                                         textAlign: TextAlign.center,
+                                                         style: TextStyle(
+                                                            color: model.theme.white,      
+                                                            fontSize: opacityAnimation.value * 7,
+                                                            fontWeight: FontWeight.bold,
+                                                         ),
+                                                      ),
+                                                   )
+                                                ),
+                                                /// ADD CHIT TEMPLATE BUTTON
+                                                Transform(
+                                                   alignment: Alignment.center,
+                                                   transform: Matrix4.rotationZ(getRadianFromDegree(rotationAnimation.value))..scale(btnChitConfigAnimation.value),
+                                                   child: CircularButton(
+                                                      width: 40,
+                                                      height: 40,
+                                                      color: model.theme.primary,
+                                                      icon: Icon(Icons.settings, color: Colors.white,),
+                                                      onClick: (){ 
+                                                         dashboardDispose();
+                                                         Navigator.pushNamed(context, "/chittemplate");
+                                                      },
+                                                   ),
+                                                ),
+                                             ]
                                           ),
                                        ),
                                        CircularButton(
                                           width: 50,
                                           height: 50,
-                                          color: Provider.of<PreferenceModel>(context).theme.primary,
+                                          color: model.theme.primary,
                                           icon: Icon(Icons.add, color: Colors.white,),
                                           onClick: (){ 
                                              if(animationController.isCompleted){
@@ -247,6 +332,13 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
       );
    }
 
+   void dashboardDispose(){
+      if(animationController.isCompleted){
+         animationController.reverse();
+      }
+      memberSearchController.clear();
+   }
+
    void setUpSearchMemberAutoComplete(BuildContext context){
       if(overlayState == null){
          overlayState = Overlay.of(context);
@@ -267,7 +359,10 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                      width: searchMemberSize.width,
                      child: Material(
                         color: Colors.transparent,
-                        child: DashboardMemberSuggestions(suggestedMembers: suggestedMembers,),
+                        child: DashboardMemberSuggestions(
+                           suggestedMembers: suggestedMembers,
+                           removeOverlay: dashboardDispose,
+                        ),
                      ),
                   ),
                );
@@ -325,7 +420,9 @@ class DashboardHeading extends BaseModelWidget<DashboardViewModel>{
 class DashboardMemberSuggestions extends StatelessWidget{
 
    final List<Member> suggestedMembers;
-   DashboardMemberSuggestions({ @required this.suggestedMembers });
+   // final DashboardViewModel model;
+   final Function removeOverlay;
+   DashboardMemberSuggestions({ @required this.suggestedMembers, this.removeOverlay });
 
    @override
    Widget build(BuildContext context) {
@@ -339,6 +436,11 @@ class DashboardMemberSuggestions extends StatelessWidget{
                Member member = suggestedMembers[index];
                return GestureDetector(
                   onTap: (){
+                     // OverlayState overlayState = Overlay.of(context);
+                     // overlayState.dispose();
+                     if(removeOverlay != null){
+                        removeOverlay();
+                     }
                      print('Navigate to member page');
                   },
                   child: CustomCard(
@@ -376,6 +478,10 @@ class DashboardMemberSuggestions extends StatelessWidget{
 
 class DashboardChitList extends BaseModelWidget<DashboardViewModel> {
 
+   final Function dashboardDispose;
+
+   DashboardChitList({ @required this.dashboardDispose });
+
    @override
    Widget build(BuildContext context, DashboardViewModel model) {
       return ListView.builder(
@@ -384,92 +490,88 @@ class DashboardChitList extends BaseModelWidget<DashboardViewModel> {
          itemCount: model.chitsInfo.length,
          itemBuilder: (context, index){
             ChitInfo chitInfo = model.chitsInfo[index];
-            return GestureDetector(
-               onLongPress: (){
-                  print("Long pressed show edit icons");
-               },
-               onTap: (){
-                  print("Move to next screen");
-               },
-               child: CustomCard(
-                  model: model,
-                  // margin: EdgeInsets.only(bottom: 15.0),
-                  // elevation: 3.0,
-                  child: Padding(
-                     padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
-                     child: Column(
-                        children: [
+            return CustomCard(
+               customCardGestures: CustomCardGestures(
+                  onTap: (){
+                     dashboardDispose();
+                     print("Move to chit detail screen");                     
+                  },
+               ),
+               model: model,
+               child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
+                  child: Column(
+                     children: [
 
-                              // ROW 1
-                              Row(
-                                 children: [
-                                    Expanded( 
-                                       flex: 1, 
-                                       child: Cell(
-                                          label: model.language.lableChitName, 
-                                          value: chitInfo.name, 
-                                          model: model
-                                       )
+                           // ROW 1
+                           Row(
+                              children: [
+                                 Expanded( 
+                                    flex: 1, 
+                                    child: Cell(
+                                       label: model.language.lableChitName, 
+                                       value: chitInfo.name, 
+                                       model: model
+                                    )
+                                 ),
+                                 Expanded(
+                                    flex: 1,
+                                    child: Cell(
+                                       label: model.language.labelChitValue, 
+                                       value: chitInfo.chitTemplate.amount, 
+                                       model: model,
+                                    ), 
+                                 ),
+                              ],
+                           ),
+                           SizedBox(height: 15.0,),
+                           
+                           // ROW 2
+                           Row(
+                              children: [
+                                 Expanded( 
+                                    flex: 1, 
+                                    child: Cell(
+                                       label: model.language.labelInstallmentNo, 
+                                       value: chitInfo.installments[0].installmentNo, 
+                                       model: model,
                                     ),
-                                    Expanded(
-                                       flex: 1,
-                                       child: Cell(
-                                          label: model.language.labelChitValue, 
-                                          value: chitInfo.chitTemplate.amount, 
-                                          model: model,
-                                       ), 
+                                 ),
+                                 Expanded(
+                                    flex: 1,
+                                    child: Cell(
+                                       label: model.language.labelMembers, 
+                                       value: chitInfo.chitTemplate.membersCount, 
+                                       icon: Icons.supervisor_account, model: model,
                                     ),
-                                 ],
-                              ),
-                              SizedBox(height: 15.0,),
-                              
-                              // ROW 2
-                              Row(
-                                 children: [
-                                    Expanded( 
-                                       flex: 1, 
-                                       child: Cell(
-                                          label: model.language.labelInstallmentNo, 
-                                          value: chitInfo.installments[0].installmentNo, 
-                                          model: model,
-                                       ),
-                                    ),
-                                    Expanded(
-                                       flex: 1,
-                                       child: Cell(
-                                          label: model.language.labelMembers, 
-                                          value: chitInfo.chitTemplate.membersCount, 
-                                          icon: Icons.supervisor_account, model: model,
-                                       ),
-                                    ),
-                                 ],
-                              ),
+                                 ),
+                              ],
+                           ),
 
-                              SizedBox(height: 15.0,),
-                              
-                              // ROW 3
-                              Row(
-                                 children: [
-                                    Expanded(
-                                       flex: 1,
-                                       child: Cell(
-                                          label: model.language.labelChitDate, 
-                                          value: chitInfo.chitDay, 
-                                          model: model,
-                                       ),
+                           SizedBox(height: 15.0,),
+                           
+                           // ROW 3
+                           Row(
+                              children: [
+                                 Expanded(
+                                    flex: 1,
+                                    child: Cell(
+                                       label: model.language.labelChitDate, 
+                                       value: chitInfo.chitDay, 
+                                       model: model,
                                     ),
-                                    Expanded( 
-                                       flex: 1, 
-                                       child: Cell(
-                                          label: model.language.labelPayableAmount, 
-                                          value: chitInfo.installments[0].payableAmount, 
-                                          model: model,
-                                       ),
+                                 ),
+                                 Expanded( 
+                                    flex: 1, 
+                                    child: Cell(
+                                       label: model.language.labelPayableAmount, 
+                                       value: chitInfo.installments[0].payableAmount, 
+                                       model: model,
                                     ),
-                                 ],
-                              ),
-                        ],
-                     ),
+                                 ),
+                              ],
+                           ),
+                     ],
                   ),
                ),
             );

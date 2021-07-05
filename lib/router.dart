@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:vdo_chit_app/core/shared/ui/widgets/hero_page_route.dart';
-import 'package:vdo_chit_app/ui/add_chit_template_view.dart/add_chit_template_view.dart';
+import 'package:vdo_chit_app/ui/chit_template_view.dart/add_chit_template_view.dart';
 
 import 'ui/chit_template_view.dart/chit_template_view.dart';
 import 'ui/dashboard_view/dashboard_view.dart';
@@ -12,7 +12,7 @@ class CustomRouter {
       case "/":
          return MaterialPageRoute(builder: (_) => DashboardView());
       case "/chittemplate":
-         return MaterialPageRoute(builder: (_) => ChitTemplateView());
+         return CupertinoPageRoute(builder: (_) => ChitTemplateView());
       case "/addchittemplate":
          return HeroPageRoute(builder: (_) => AddChitTemplateView());
       default:

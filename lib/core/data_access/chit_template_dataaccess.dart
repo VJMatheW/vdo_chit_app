@@ -23,11 +23,18 @@ class ChitTemplateDataAccess extends BaseDataAccess{
       return chitTemplates;
    }
 
-   Future<ChitTemplate> postAddNewChitTemplate(Map<String, int> chitTemplateObj) async {
+   Future<ChitTemplate> postAddNewChitTemplate(Map<String, int> chitTemplateMap) async {
       ChitTemplate chitTemplate;
 
-      // HttpResponse response = await _ht
+      HttpResponse response = await httpClient.post(url: "/chittemplate", body: chitTemplateMap);
+      handleResponseCode(response, 201);
+
+      var chitTemplateObject = response.body["data"] as Object;
+
+      chitTemplate = ChitTemplate.fromJson(chitTemplateObject);
 
       return chitTemplate;
    }
+
+
 }

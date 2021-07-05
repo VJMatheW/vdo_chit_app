@@ -171,7 +171,6 @@ class UIWidgets {
                fontWeight: FontWeight.w400,            
             ),
          ),
-         // color: Theme.of(context).buttonColor,
          disabledColor: Theme.of(context).buttonColor,
          disabledTextColor: Colors.black26,
          onPressed: onPressed,
