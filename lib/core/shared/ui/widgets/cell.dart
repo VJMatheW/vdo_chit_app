@@ -60,7 +60,7 @@ class Cell extends StatelessWidget {
                onTap: (){
                   print("Call the number");
                },
-               child: Icon(Icons.phone_forwarded)
+               child: Icon(Icons.phone_forwarded, color: model.theme.primary,)
             )
          ],
       );

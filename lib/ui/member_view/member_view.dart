@@ -1,24 +1,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
-import '../../core/data_models/chit_template_datamodel.dart';
+import '../../core/data_models/data_models.dart';
 import '../../core/enums_and_variables/info_state.dart';
 import '../../core/shared/ui/base_widget.dart';
 import '../../core/shared/ui/widgets/widgets.dart';
 import '../../locator.dart';
 import '../base_model_widget.dart';
-import 'chit_template_view_model.dart';
+import 'member_view_model.dart';
 
-class ChitTemplateView extends StatelessWidget {
-   const ChitTemplateView({ Key key }) : super(key: key);
+class MemberView extends StatelessWidget {
+  const MemberView({ Key key }) : super(key: key);
 
    @override
    Widget build(BuildContext context) {
       return BaseWidget(
-         viewModel: locator<ChitTemplateViewModel>(),
-         onModelReady: (model)=> model.init(),
-         builder: (context, ChitTemplateViewModel model, child){
+         viewModel: locator<MemberViewModel>(),
+         onModelReady: (model) => model.init(),
+         builder: (context, MemberViewModel model, child){
             return Scaffold(
                backgroundColor: model.theme.background,
                appBar: AppBar(
@@ -29,29 +28,29 @@ class ChitTemplateView extends StatelessWidget {
                         onPressed: ()=>{ Navigator.of(context).pushNamed('/addchittemplate') }
                      )
                   ],
-                  title: Text(model.language.appBarChitTemplate),
+                  title: Text(model.language.appBarMember),
                ),
                body: Padding(
                   padding: EdgeInsets.symmetric(vertical: 15.0),
                   child: model.state == ViewState.Busy
                      ? Center(child: CupertinoActivityIndicator(),)
-                     : ChitTemplateList(),
-               )
+                     : MemberList(),
+               ),
             );
-         }
+         },
       );
    }
 }
 
-class ChitTemplateList extends BaseModelWidget<ChitTemplateViewModel>{
+class MemberList extends BaseModelWidget<MemberViewModel>{
    @override
-   Widget build(BuildContext context, ChitTemplateViewModel model) {
+   Widget build(BuildContext context, MemberViewModel model) {
       return ListView.builder(
          padding: const EdgeInsets.symmetric(horizontal: 12.0),
          physics: BouncingScrollPhysics(),
-         itemCount: model.chitTemplates.length,
+         itemCount: model.members.length,
          itemBuilder: (context, index){
-            ChitTemplate chitTemplate = model.chitTemplates[index];
+            Member member = model.members[index];
             return GestureDetector(
                onLongPress: (){
                   print("Long pressed show edit icons");
@@ -66,29 +65,23 @@ class ChitTemplateList extends BaseModelWidget<ChitTemplateViewModel>{
                   child: Padding(
                      padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                            Expanded( 
                               flex: 1, 
                               child: Cell(
-                                 label: model.language.labelChitAmount, 
-                                 value: chitTemplate.amount, 
+                                 label: model.language.labelMemberName, 
+                                 value: member.name, 
                                  model: model
                               )
                            ),
                            Expanded(
                               flex: 1,
                               child: Cell(
-                                 label: model.language.labelChitPercentage, 
-                                 value: chitTemplate.percentage, 
+                                 label: model.language.labelMemberPhone, 
+                                 value: member.phone, 
                                  model: model,
-                              ), 
-                           ),
-                           Expanded(
-                              flex: 1,
-                              child: Cell(
-                                 label: model.language.labelChitTemplateMembersCount,
-                                 value: chitTemplate.membersCount, 
-                                 model: model,
+                                 isPhoneNumber: true,
                               ), 
                            ),
                         ],

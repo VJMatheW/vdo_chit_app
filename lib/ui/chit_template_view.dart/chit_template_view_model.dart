@@ -24,6 +24,7 @@ class ChitTemplateViewModel extends BaseModel{
          setState(ViewState.Busy);
          chitTemplates = await chitTemplateDataAccess.getChitTemplates();
       }catch(e){
+         chitTemplates = [];
          print("Exception $e");
       }finally{
          setState(ViewState.Idle);

@@ -256,7 +256,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                                       icon: Icon(Icons.person_add, color: Colors.white,),
                                                       onClick: (){ 
                                                          dashboardDispose();
-                                                         // Navigator.pushNamed(context, "/chittemplate");
+                                                         Navigator.pushNamed(context, "/member");
                                                       },
                                                    ),
                                                 ),

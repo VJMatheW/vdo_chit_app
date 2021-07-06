@@ -10,6 +10,8 @@ abstract class AppLanguage{
    String labelChitMembersCount;
    String labelChitAmount;
    String labelChitTemplateMembersCount;
+   String labelMemberName;
+   String labelMemberPhone;
 
    // appbar headings
    String appBarChitTemplate;
@@ -46,6 +48,8 @@ class English implements AppLanguage{
    String labelChitMembersCount = 'Members count';
    String labelChitAmount = 'Amount';
    String labelChitTemplateMembersCount = 'Members';
+   String labelMemberName = 'Member Name';
+   String labelMemberPhone = 'Mmeber Phone';
 
    // appbar headings
    String appBarChitTemplate = 'Chit Template';
@@ -81,6 +85,8 @@ class Tamil implements AppLanguage{
    String labelChitMembersCount = 'உறுப்பினர்கள் எண்ணிக்கை';
    String labelChitAmount = 'மதிப்பு';
    String labelChitTemplateMembersCount = 'உறுப்பினர்கள்';
+   String labelMemberName = 'உறுப்பினர் பெயர்';
+   String labelMemberPhone = 'தொலைபேசி';
 
    // appbar headings
    String appBarChitTemplate = 'சீட்டு கட்டமைப்பு';
