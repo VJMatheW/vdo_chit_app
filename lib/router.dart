@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vdo_chit_app/ui/member_view/add_member_view.dart';
 
 import 'core/shared/ui/widgets/hero_page_route.dart';
 import 'ui/chit_template_view.dart/add_chit_template_view.dart';
@@ -18,6 +19,8 @@ class CustomRouter {
          return HeroPageRoute(builder: (_) => AddChitTemplateView());
       case "/member":
          return CupertinoPageRoute(builder: (_) => MemberView());
+      case "/addmember":
+         return HeroPageRoute(builder: (_) => AddMemberView());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

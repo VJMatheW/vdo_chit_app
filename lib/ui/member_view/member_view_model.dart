@@ -27,4 +27,22 @@ class MemberViewModel extends BaseModel{
          setState(ViewState.Idle);
       }
    }
+
+   Future<bool> postMember(String name, String phone) async {
+      try{
+         setState(ViewState.Busy);
+         Map<String, String> memberMap = {
+            "name": name,
+            "phone": phone
+         };
+         Member member = await memberDataAccess.postAddNewMember(memberMap);
+         members.insert(0, member);
+         return true;
+      }catch(e){                
+         print("Exception $e");
+         return false;
+      }finally{
+         setState(ViewState.Idle);
+      }     
+   }
 }

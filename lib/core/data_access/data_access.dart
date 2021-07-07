@@ -11,7 +11,7 @@ class BaseDataAccess{
 
    void handleResponseCode(HttpResponse response, int expectedStatusCode){
       if(response.statusCode != expectedStatusCode){
-         throw Exception({ "errorCode": response.statusCode, "error": response.body['error'] });
+         throw Exception({ "errorCode": response.statusCode, "error": response.body['data']['error'] });
       }
    }
 }

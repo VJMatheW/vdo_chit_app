@@ -121,7 +121,7 @@ class UIWidgets {
    }
 
    static Widget textInputLabel(
-         {@required BuildContext context, @required String label, @required BaseModel model}) {
+         {@required String label, @required BaseModel model}) {
       return Padding(
          padding: EdgeInsets.fromLTRB(0,0,0,5.0),
          child: Text(

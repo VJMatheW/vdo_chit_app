@@ -25,7 +25,7 @@ class MemberView extends StatelessWidget {
                   actions: <Widget>[
                      IconButton(
                         icon: Icon(Icons.add, size: 30,), 
-                        onPressed: ()=>{ Navigator.of(context).pushNamed('/addchittemplate') }
+                        onPressed: ()=>{ Navigator.of(context).pushNamed('/addmember') }
                      )
                   ],
                   title: Text(model.language.appBarMember),

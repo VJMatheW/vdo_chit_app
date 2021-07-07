@@ -15,4 +15,17 @@ class MemberDataAccess extends BaseDataAccess{
 
       return members;
    }
+
+   Future<Member> postAddNewMember(Map<String , String> memberMap) async{
+      Member member;
+
+      HttpResponse response = await httpClient.post(url: "/member", body: memberMap);
+      handleResponseCode(response, 201);
+
+      var memberObject = response.body["data"] as Object;
+
+      member = Member.fromJson(memberObject);
+
+      return member;
+   }
 }

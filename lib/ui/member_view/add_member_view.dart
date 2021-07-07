@@ -1,46 +1,43 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../../core/enums_and_variables/info_state.dart';
 import '../../core/shared/ui/base_widget.dart';
 import '../../core/shared/ui/ui_widgets.dart';
 import '../../locator.dart';
 import '../base_model_widget.dart';
-import 'chit_template_view_model.dart';
+import 'member_view_model.dart';
 
-class AddChitTemplateView extends StatefulWidget {
-  const AddChitTemplateView({ Key key }) : super(key: key);
+class AddMemberView extends StatefulWidget {
+   const AddMemberView({ Key key }) : super(key: key);
 
   @override
-  _AddChitTemplateViewState createState() => _AddChitTemplateViewState();
+  _AddMemberViewState createState() => _AddMemberViewState();
 }
 
-class _AddChitTemplateViewState extends State<AddChitTemplateView> {
+class _AddMemberViewState extends State<AddMemberView> {
 
-   TextEditingController _amountController, _percentageController, _memberCountController;
+   TextEditingController _nameController, _phoneController;
 
    @override
-   void initState(){
-      _amountController = TextEditingController();
-      _percentageController = TextEditingController();
-      _memberCountController = TextEditingController();
+   void initState() {
+      _nameController = TextEditingController();
+      _phoneController = TextEditingController();
       super.initState();
    }
 
    @override
    void dispose() {
-      _amountController.dispose();
-      _percentageController.dispose();
-      _memberCountController.dispose();
+      _nameController.dispose();
+      _phoneController.dispose();
       super.dispose();
    }
 
    @override
    Widget build(BuildContext context) {
       return BaseWidget(
-         viewModel: locator<ChitTemplateViewModel>(),
-         builder: (context, ChitTemplateViewModel model, child){
+         viewModel: locator<MemberViewModel>(),
+         builder: (context, MemberViewModel model, child){
             return Material(
                color: Colors.transparent,
                child: Scaffold(
@@ -49,9 +46,9 @@ class _AddChitTemplateViewState extends State<AddChitTemplateView> {
                      margin: EdgeInsets.only(
                         top: (MediaQuery.of(context).size.height / 100) * 15,
                         left: 12,
-                        right: 12,
+                        right: 12
                      ),
-                     color: Colors.white,
+                     color: model.theme.background,
                      child: SingleChildScrollView(
                         child: Stack(
                            children: [
@@ -82,13 +79,11 @@ class _AddChitTemplateViewState extends State<AddChitTemplateView> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [                                                        
                                        SizedBox(height: 30,),
-                                       AddChitTemplateHeading(),
+                                       AddMemberHeading(),
                                        SizedBox(height: 25,),
-                                       ChitAmountInputField( controller: _amountController ),
+                                       MemberNameInputField( controller: _nameController ),
                                        SizedBox(height: 20,),
-                                       ChitPercentageInputField( controller: _percentageController ),
-                                       SizedBox(height: 20,),
-                                       ChitMembersCountInputField( controller: _memberCountController ),
+                                       MemberPhoneInputField( controller: _phoneController ),
                                        SizedBox(height: 30,),
                                        model.state == ViewState.Busy
                                        ? Center(child: CupertinoActivityIndicator(),)
@@ -97,13 +92,14 @@ class _AddChitTemplateViewState extends State<AddChitTemplateView> {
                                              Navigator.pop(context);
                                           },
                                           onSuccess: () async {
-                                             String amount = _amountController.text;
-                                             String percentage = _percentageController.text;
-                                             String memberCount = _memberCountController.text;
-                                             
-                                             await model.postChitTemplate(amount, percentage, memberCount);
+                                             String name = _nameController.text;
+                                             String phone = _phoneController.text;
 
-                                             Navigator.pop(context);
+                                             bool status = await model.postMember(name, phone);
+                                             
+                                             if(status){
+                                                Navigator.pop(context);
+                                             }
                                           },
                                        ),
                                        SizedBox(height: 30,),
@@ -116,36 +112,63 @@ class _AddChitTemplateViewState extends State<AddChitTemplateView> {
                   ),
                ),
             );
-         }
+         },
       );
    }
 }
 
-class AddChitTemplateHeading extends BaseModelWidget<ChitTemplateViewModel>{
+class AddMemberHeading extends BaseModelWidget<MemberViewModel>{
    @override
-   Widget build(BuildContext context, ChitTemplateViewModel model) {
-      return UIWidgets.modalHeading(model.language.modalHeadingAddChitTemplate, model);
+   Widget build(BuildContext context, MemberViewModel model) {
+      return UIWidgets.modalHeading(model.language.modalHedingNewMember, model);
    }
 }
 
-class ChitAmountInputField extends BaseModelWidget<ChitTemplateViewModel>{
+class MemberNameInputField extends BaseModelWidget<MemberViewModel>{
 
    final TextEditingController controller;
 
-   ChitAmountInputField({ @required this.controller });
+   MemberNameInputField({ @required this.controller });
 
    @override
-   Widget build(BuildContext context, ChitTemplateViewModel model) {
+   Widget build(BuildContext context, MemberViewModel model) {
       return Column(
          crossAxisAlignment: CrossAxisAlignment.start,
          children: [
-            UIWidgets.textInputLabel(label: model.language.labelChitValue, model: model),
+            UIWidgets.textInputLabel(label: model.language.labelMemberName, model: model),
             Container(
                height: 43.0,
                child: UIWidgets.textInput(
                   context: context, 
                   model: model, 
-                  hintText: model.language.hintChitAmount,
+                  hintText: model.language.hintMemberName,
+                  inputType: TextInputType.text,
+                  controller: controller,
+               ),
+            )
+         ],
+      );
+   }
+}
+
+class MemberPhoneInputField extends BaseModelWidget<MemberViewModel>{
+
+   final TextEditingController controller;
+
+   MemberPhoneInputField({ @required this.controller });
+
+   @override
+   Widget build(BuildContext context, MemberViewModel model) {
+      return Column(
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: [
+            UIWidgets.textInputLabel(label: model.language.labelMemberPhone, model: model),
+            Container(
+               height: 43.0,
+               child: UIWidgets.textInput(
+                  context: context, 
+                  model: model, 
+                  hintText: model.language.hintMemberPhone,
                   inputType: TextInputType.number,
                   controller: controller,
                ),
@@ -155,61 +178,7 @@ class ChitAmountInputField extends BaseModelWidget<ChitTemplateViewModel>{
    }
 }
 
-class ChitPercentageInputField extends BaseModelWidget<ChitTemplateViewModel>{
-
-   final TextEditingController controller;
-
-   ChitPercentageInputField({ @required this.controller });
-
-   @override
-   Widget build(BuildContext context, ChitTemplateViewModel model) {
-      return Column(
-         crossAxisAlignment: CrossAxisAlignment.start,
-         children: [
-            UIWidgets.textInputLabel(label: model.language.labelChitPercentage, model: model),
-            Container(
-               height: 43.0,
-               child: UIWidgets.textInput(
-                  context: context, 
-                  model: model, 
-                  hintText: model.language.hintChitPercentage,
-                  inputType: TextInputType.number,
-                  controller: controller,
-               ),
-            )
-         ],
-      );
-   }
-}
-
-class ChitMembersCountInputField extends BaseModelWidget<ChitTemplateViewModel>{
-
-   final TextEditingController controller;
-
-   ChitMembersCountInputField({ @required this.controller });
-
-   @override
-   Widget build(BuildContext context, ChitTemplateViewModel model) {
-      return Column(
-         crossAxisAlignment: CrossAxisAlignment.start,
-         children: [
-            UIWidgets.textInputLabel(label: model.language.labelChitMembersCount, model: model),
-            Container(
-               height: 43.0,
-               child: UIWidgets.textInput(
-                  context: context, 
-                  model: model, 
-                  hintText: model.language.hintChitMembersCount,
-                  inputType: TextInputType.number,
-                  controller: controller,    
-               )
-            )
-         ],
-      );
-   }
-}
-
-class ActionButtons extends BaseModelWidget<ChitTemplateViewModel>{
+class ActionButtons extends BaseModelWidget<MemberViewModel>{
 
    final Function onCancel;
    final Function onSuccess;
@@ -217,7 +186,7 @@ class ActionButtons extends BaseModelWidget<ChitTemplateViewModel>{
    ActionButtons({ @required this.onCancel, @required this.onSuccess });
 
    @override
-   Widget build(BuildContext context, ChitTemplateViewModel model) {
+   Widget build(BuildContext context, MemberViewModel model) {
       return Row(
          children: [            
             Expanded(

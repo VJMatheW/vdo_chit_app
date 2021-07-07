@@ -23,12 +23,15 @@ abstract class AppLanguage{
 
    // modal popup headings
    String modalHeadingAddChitTemplate;
+   String modalHedingNewMember;
 
    // input place holder
    String hintDashboardSearchMember;
    String hintChitAmount;
    String hintChitPercentage;
    String hintChitMembersCount;
+   String hintMemberName;
+   String hintMemberPhone;
 
    // button text
    String buttonCreate;
@@ -61,12 +64,15 @@ class English implements AppLanguage{
 
    // modal popup headings
    String modalHeadingAddChitTemplate = 'New Chit Template';
+   String modalHedingNewMember = 'New Member';
 
    // input place holder
    String hintDashboardSearchMember = 'Search member';
    String hintChitAmount = 'Amount';
    String hintChitPercentage = 'Percentage';
    String hintChitMembersCount = 'Members count';
+   String hintMemberName = 'Member Name';
+   String hintMemberPhone = 'Member Phone';
 
    // button text
    String buttonCreate = 'Create';
@@ -95,6 +101,7 @@ class Tamil implements AppLanguage{
 
    // headings
    String headingOngoingChits = 'தற்போதைய சீட்டு';
+   String modalHedingNewMember = 'புது உறுப்பினர்';
 
 
    // modal popup headings
@@ -105,6 +112,8 @@ class Tamil implements AppLanguage{
    String hintChitAmount = 'மதிப்பு';
    String hintChitPercentage = 'சதவிதம்';
    String hintChitMembersCount = 'எண்ணிக்கை';
+   String hintMemberName = 'உறுப்பினர் பெயர்';
+   String hintMemberPhone = 'உறுப்பினர் தொலைபேசி';
 
    // button text
    String buttonCreate = 'உருவாக்கு';
