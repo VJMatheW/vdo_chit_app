@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:vdo_chit_app/core/data_access/member_dataaccess.dart';
+import 'package:vdo_chit_app/ui/chit_view/chit_view_model.dart';
 
 import 'core/data_access/data_access.dart';
 import 'core/shared/services/contacts_service.dart';
@@ -35,4 +36,5 @@ void setupLocator() {
    locator.registerLazySingleton<DashboardViewModel>(() => DashboardViewModel());
    locator.registerLazySingleton<ChitTemplateViewModel>(() => ChitTemplateViewModel());
    locator.registerLazySingleton<MemberViewModel>(() => MemberViewModel());
+   locator.registerLazySingleton<ChitViewModel>(() => ChitViewModel());
 }

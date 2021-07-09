@@ -33,6 +33,17 @@ class UIWidgets {
       );
    }
 
+   static Widget labelHeading(String text, BaseModel model){
+      return Text(
+         text,
+         style: TextStyle(
+            fontSize: 13.0,
+            fontWeight: FontWeight.w700,
+            color: model.theme.primary,
+         ),
+      );
+   }
+
    static Widget textInput({
       @required BuildContext context,
       bool autoFocus,

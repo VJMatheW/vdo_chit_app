@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class HeroPageRoute<T> extends PageRoute<T>{
+class OverlayPageRoute<T> extends PageRoute<T>{
    
    final WidgetBuilder _builder;
    
-   HeroPageRoute({ @required builder, RouteSettings settings, bool fullScreenDialogParam = false })
+   OverlayPageRoute({ @required builder, RouteSettings settings, bool fullScreenDialogParam = false })
       : _builder = builder,
       super(settings: settings, fullscreenDialog: fullScreenDialogParam);
 

@@ -23,11 +23,13 @@ class Chit{
 class ChitInfo extends Chit{
    ChitTemplate _chitTemplate;
    List<Installment> _installments;
+   int _addedMembersCount;
 
-   ChitInfo({ int id, String name, int chitDay, String status, ChitTemplate chitTemplate, List<Installment> installments })
+   ChitInfo({ int id, String name, int chitDay, String status, int addedMembersCount, ChitTemplate chitTemplate, List<Installment> installments })
    : super(id: id, name: name, chitDay: chitDay, status: status){
       _chitTemplate = chitTemplate;
       _installments = installments;
+      _addedMembersCount = addedMembersCount;
    }
 
    factory ChitInfo.fromJson(Map<String, dynamic> jsonObject, ChitTemplate chitTemplate, List<Installment> installments){
@@ -41,6 +43,18 @@ class ChitInfo extends Chit{
       );
    }
 
+   factory ChitInfo.fromJsonForChitView(Map<String, dynamic> jsonObject, ChitTemplate chitTemplate){
+      return ChitInfo(
+         id: jsonObject["id"],
+         name: jsonObject["name"],
+         chitDay: jsonObject["chit_day"],
+         status: jsonObject["status"],
+         addedMembersCount: jsonObject["added_members_count"],
+         chitTemplate: chitTemplate,
+      );
+   }
+
    ChitTemplate get chitTemplate => _chitTemplate;
    List<Installment> get installments => _installments;
+   int get addedMembersCount => _addedMembersCount;
 }

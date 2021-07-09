@@ -40,4 +40,25 @@ class ChitDataAccess extends BaseDataAccess{
       }).toList();
       return chitInfos;
    }
+
+   Future<List<ChitInfo>> getChits() async {
+      List<ChitInfo> chitInfos = [];
+      
+      HttpResponse response = await  _httpClient.get(url: "/chit");
+      handleResponseCode(response, 200);
+
+      var chitArray = response.body["data"] as List;
+      
+      chitInfos = chitArray.map(( chitObj ){
+         // creating chit template 
+         ChitTemplate chitTemplate = ChitTemplate.fromJson(chitObj["chitTemplate"]);
+         
+         // creating chit info
+         ChitInfo chitInfo = ChitInfo.fromJsonForChitView(chitObj, chitTemplate);
+         
+         return chitInfo;
+
+      }).toList();
+      return chitInfos;
+   }
 }

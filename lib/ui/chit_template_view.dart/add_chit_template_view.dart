@@ -51,7 +51,7 @@ class _AddChitTemplateViewState extends State<AddChitTemplateView> {
                         left: 12,
                         right: 12,
                      ),
-                     color: Colors.white,
+                     color: model.theme.background,
                      child: SingleChildScrollView(
                         child: Stack(
                            children: [

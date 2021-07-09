@@ -213,7 +213,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                                                       icon: Icon(Icons.file_copy, color: Colors.white,),
                                                       onClick: (){ 
                                                          dashboardDispose();
-                                                         print('add chit clicked'); 
+                                                         Navigator.pushNamed(context, "/chit");
                                                       },
                                                    ),
                                                 ),
@@ -509,7 +509,7 @@ class DashboardChitList extends BaseModelWidget<DashboardViewModel> {
                                  Expanded( 
                                     flex: 1, 
                                     child: Cell(
-                                       label: model.language.lableChitName, 
+                                       label: model.language.labelChitName, 
                                        value: chitInfo.name, 
                                        model: model
                                     )
@@ -524,7 +524,7 @@ class DashboardChitList extends BaseModelWidget<DashboardViewModel> {
                                  ),
                               ],
                            ),
-                           SizedBox(height: 15.0,),
+                           SizedBox(height: 10.0,),
                            
                            // ROW 2
                            Row(
@@ -548,7 +548,7 @@ class DashboardChitList extends BaseModelWidget<DashboardViewModel> {
                               ],
                            ),
 
-                           SizedBox(height: 15.0,),
+                           SizedBox(height: 10.0,),
                            
                            // ROW 3
                            Row(

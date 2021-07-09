@@ -3,6 +3,7 @@ import '../shared/services/http_service.dart';
 
 export 'chit_dataaccess.dart';
 export 'chit_template_dataaccess.dart';
+export 'member_dataaccess.dart';
 
 class BaseDataAccess{
    final HttpService _httpClient = locator<HttpService>();
