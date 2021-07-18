@@ -15,6 +15,7 @@ abstract class AppLanguage{
    String labelMemberPhone;
    String labelChitMembers;
    String labelChitTemplate;
+   String labelMemberAliasName;
 
    // appbar headings
    String appBarChitTemplate;
@@ -40,12 +41,16 @@ abstract class AppLanguage{
    String hintMemberPhone;
    String hintChitName;
    String hintChitDate;
+   String hintMemberAliasName;
 
    // button text
    String buttonCreate;
    String buttonCancel;
    String buttonSelectMemberForChit;
    String buttonSelectTemplateForChit;
+   String buttonSelect;
+   String buttonFinishLater;
+   String buttonUpdate;
 }
 
 class English implements AppLanguage{
@@ -66,6 +71,7 @@ class English implements AppLanguage{
    String labelMemberPhone = 'Mmeber Phone';
    String labelChitMembers = 'Chit Members';
    String labelChitTemplate = 'Chit Template';
+   String labelMemberAliasName = 'Member Alias Name';
 
    // appbar headings
    String appBarChitTemplate = 'Chit Template';
@@ -91,12 +97,16 @@ class English implements AppLanguage{
    String hintMemberPhone = 'Member Phone';
    String hintChitName = 'Chit Name';
    String hintChitDate = 'Chit Date';
+   String hintMemberAliasName = 'Alias Name';
 
    // button text
    String buttonCreate = 'Create';
    String buttonCancel = 'Cancel';
    String buttonSelectTemplateForChit = 'Select Chit Template';
    String buttonSelectMemberForChit = 'Select Members';
+   String buttonSelect = 'Select';
+   String buttonFinishLater = 'Finish Later';
+   String buttonUpdate = 'Update';
 }
 
 class Tamil implements AppLanguage{
@@ -116,6 +126,7 @@ class Tamil implements AppLanguage{
    String labelMemberPhone = 'தொலைபேசி';
    String labelChitMembers = 'சீட்டு உறுப்பினர்கள்';
    String labelChitTemplate = 'சீட்டு கட்டமைப்பு';
+   String labelMemberAliasName = 'உறுப்பினர் மாற்று பெயர்';
 
    // appbar headings
    String appBarChitTemplate = 'சீட்டு கட்டமைப்பு';
@@ -141,10 +152,14 @@ class Tamil implements AppLanguage{
    String hintMemberPhone = 'உறுப்பினர் தொலைபேசி';
    String hintChitName = 'சீட்டு பெயர்';
    String hintChitDate = 'சீட்டு தேதி';
+   String hintMemberAliasName = 'மாற்று பெயர்';
 
    // button text
    String buttonCreate = 'உருவாக்கு';
    String buttonCancel = 'ரத்துசெய்';
    String buttonSelectTemplateForChit = 'கட்டமைப்பு தேர்வுசெய்';
    String buttonSelectMemberForChit = 'உறுப்பினர்கள் தேர்வுசெய்';
+   String buttonSelect = 'தேர்வு செய்';
+   String buttonFinishLater = 'பின்னர் முடி';
+   String buttonUpdate = 'புதுப்பி';
 }

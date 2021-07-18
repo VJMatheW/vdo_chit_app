@@ -12,7 +12,7 @@ class Cell extends StatelessWidget {
    final double labelFontSize;
    final double valueFontSize;
 
-   Cell({ Key key, @required this.label, @required this.value, this.icon, this.isPhoneNumber = false, this.model, this.labelFontSize = 9.0, this.valueFontSize = 14.0 }) : super(key: key);
+   Cell({ Key key, @required this.label, @required this.value, this.icon, this.isPhoneNumber = false, this.model, this.labelFontSize = 10.0, this.valueFontSize = 20.0 }) : super(key: key);
 
    @override
    Widget build(BuildContext context) {

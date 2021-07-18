@@ -12,22 +12,37 @@ import '../base_model_widget.dart';
 import 'chit_view_model.dart';
 
 class AddChitView extends StatefulWidget {
-  const AddChitView({ Key key }) : super(key: key);
+   final ChitInfo chit;
+   const AddChitView({ Key key, this.chit }) : super(key: key);
 
-  @override
-  _AddChitViewState createState() => _AddChitViewState();
+   @override
+   _AddChitViewState createState() => _AddChitViewState();
 }
 
 class _AddChitViewState extends State<AddChitView> {
 
    TextEditingController _chitNameController, _chitDayController;
-   ChitTemplate selectedTemplate;
    List<Member> selectedMembers = [];
+   ChitInfo chit;
+
+   void fetchMembersOfChit(int chitId) async {
+      List<Member> members = await locator<ChitViewModel>().getMembersOfChit(chitId);
+      this.selectedMembers = members ?? [];
+      setState(() {});
+   }
 
    @override
    void initState() {
       _chitNameController = TextEditingController();
       _chitDayController = TextEditingController();
+      chit = widget.chit;      
+      if(chit != null){
+         _chitNameController = TextEditingController(text: chit.name);
+         _chitDayController = TextEditingController(text: chit.chitDay?.toString());
+         fetchMembersOfChit(chit.id);
+      }else{
+         chit = ChitInfo();
+      }
       super.initState();
    }
 
@@ -41,7 +56,7 @@ class _AddChitViewState extends State<AddChitView> {
                resizeToAvoidBottomInset: false,
                appBar: AppBar(
                   backgroundColor: model.theme.primary,
-                  title: Text(model.language.appBarNewChit),
+                  title: chit?.id != null ? Text(chit.name) : Text(model.language.appBarNewChit),
                ),
                body: Padding(
                   padding: EdgeInsets.symmetric(vertical: 5.0, horizontal: 12.0),
@@ -50,17 +65,27 @@ class _AddChitViewState extends State<AddChitView> {
                      crossAxisAlignment: CrossAxisAlignment.start,
                      children: [
                         SizedBox(height: 10.0,),
-                        SelectChitTemplate(onSelect: selectTemplate, chitTemplate: this.selectedTemplate,),
+                        SelectChitTemplate(onSelect: selectTemplate, chit: this.chit,),
                         ChitNameInputField(controller: _chitNameController,),
                         SizedBox(height: 10.0,),
                         ChitDateInputField(controller: _chitDayController,),
                         SizedBox(height: 10.0,),
-                        Expanded(child: SelectChitMembers(chitTemplate: this.selectedTemplate, members: this.selectedMembers, onSelect: selectMember, onSwitch: switchMember,)),
+                        
+                        /// Selected chit member area
+                        Expanded(child: chit?.id != null
+                           ? SelectChitMembers(chitTemplate: chit.chitTemplate, members: chit.members, onSelect: selectMember, onSwitch: switchMember,)
+                           : Center(child: Text("Create chit to add Members"))
+                        ),
+                        
+                        /// ACTION BUTTONS
                         model.state == ViewState.Busy
                         ? Center(child: CupertinoActivityIndicator(),)
                         : ActionButtons(
+                           chitInfo: chit,
                            onCancel: (){ Navigator.pop(context); },
-                           onSuccess: () async {},
+                           onCreate: onCreate(model, chit, this._chitNameController, this._chitDayController, context),
+                           onFinishLater: onFinishLater(model, context),
+                           onUpdate: onUpdate(model, context),
                         ),
                         SizedBox(height: 10.0,),
                      ],
@@ -71,15 +96,55 @@ class _AddChitViewState extends State<AddChitView> {
       );
    }
 
+   Function(
+      ChitViewModel model, 
+      ChitInfo chit, 
+      TextEditingController nameController,
+      TextEditingController dayController,
+      BuildContext context) 
+      onCreate = (
+         ChitViewModel model, 
+         ChitInfo chit, 
+         TextEditingController nameController,
+         TextEditingController dayController,
+         BuildContext context){
+      void create() async {
+         print("Creating new chit ${model.language.buttonCreate} clicked");
+         chit.setId(34);
+         chit.setName(nameController.text);
+         chit.setDay( num.tryParse(dayController.text));
+         Future.delayed(Duration.zero, (){ model.setState(ViewState.Idle); });
+         // Navigator.pop(context);
+      }
+      return create;
+   };
+
+   Function(ChitViewModel model, BuildContext context) onFinishLater = (ChitViewModel model, BuildContext context){
+      void hello() async {
+         print("Creating new chit ${model.language.buttonCreate} clicked");
+         Navigator.pop(context);
+      }
+      return hello;
+   };
+
+   Function(ChitViewModel model, BuildContext context) onUpdate = (ChitViewModel model, BuildContext context){
+      void hello() async {
+         print("Creating new chit ${model.language.buttonCreate} clicked");
+         Navigator.pop(context);
+      }
+      return hello;
+   };
+
    void selectTemplate(ChitTemplate template, BaseModel model){
-      this.selectedTemplate = template;
+      chit.setChitTemplate(template);
       print("template selected");
       Future.delayed(Duration.zero, (){ model.setState(ViewState.Idle); });
    }
 
    void selectMember(Member member, BaseModel model){
-      this.selectedMembers.add(member);
-      print("Member added");
+      Member newMemberObj = Member.fromInstance(member);
+      chit.addMember(newMemberObj);
+      print("Member added ${chit.members.length}");
       Future.delayed(Duration.zero, (){ model.setState(ViewState.Idle); });
    }
 
@@ -92,9 +157,9 @@ class _AddChitViewState extends State<AddChitView> {
 
 class SelectChitTemplate extends BaseModelWidget<ChitViewModel>{
    final Function onSelect;
-   final ChitTemplate chitTemplate;
+   final ChitInfo chit;
    
-   SelectChitTemplate({ @required this.onSelect, @required this.chitTemplate });
+   SelectChitTemplate({ @required this.onSelect, @required this.chit });
    
    @override
    Widget build(BuildContext context, ChitViewModel model) {
@@ -114,7 +179,7 @@ class SelectChitTemplate extends BaseModelWidget<ChitViewModel>{
             UIWidgets.textInputLabel(label: model.language.labelChitTemplate, model: model),
 
             /// Chit template
-            chitTemplate == null 
+            chit.chitTemplate == null 
             ? CustomCard(
                model: model,
                child: SizedBox(
@@ -128,7 +193,7 @@ class SelectChitTemplate extends BaseModelWidget<ChitViewModel>{
             )
             : CustomCard(
                model: model,
-               customCardGestures: CustomCardGestures( onTap: selectTemplate ),
+               customCardGestures: CustomCardGestures( onTap: chit.id == null ? selectTemplate : null ),
                child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10.0),
                      child: Row(
@@ -138,30 +203,24 @@ class SelectChitTemplate extends BaseModelWidget<ChitViewModel>{
                               flex: 1, 
                               child: Cell(
                                  label: model.language.labelChitAmount, 
-                                 value: chitTemplate.amount, 
+                                 value: chit.chitTemplate.amount, 
                                  model: model,
-                                 labelFontSize: 10.0,
-                                 valueFontSize: 15.0,
                               )
                            ),
                            Expanded(
                               flex: 1,
                               child: Cell(
                                  label: model.language.labelChitPercentage, 
-                                 value: chitTemplate.percentage, 
+                                 value: chit.chitTemplate.percentage, 
                                  model: model,
-                                 labelFontSize: 10.0,
-                                 valueFontSize: 15.0,
                               ), 
                            ),
                            Expanded(
                               flex: 1,
                               child: Cell(
                                  label: model.language.labelChitTemplateMembersCount, 
-                                 value: chitTemplate.membersCount, 
+                                 value: chit.chitTemplate.membersCount, 
                                  model: model,
-                                 labelFontSize: 10.0,
-                                 valueFontSize: 15.0,
                               ), 
                            ),
                         ],
@@ -244,6 +303,17 @@ class SelectChitMembers extends BaseModelWidget<ChitViewModel>{
          }
       };
 
+      Function onMemberSwitched = (int indexToReplace) {
+         Function switchMember = () async {
+            dynamic obj = await Navigator.of(context).pushNamed("/selectchitmembers", arguments: { "index": indexToReplace });
+            if(obj != null){
+               onSwitch(obj, model);
+            }
+         };
+
+         return switchMember;
+      };
+
       return Column(
          crossAxisAlignment: CrossAxisAlignment.stretch,
          children: [
@@ -268,6 +338,7 @@ class SelectChitMembers extends BaseModelWidget<ChitViewModel>{
                   : SizedBox.shrink()
                ],
             ),
+
             /// member list
             Expanded(
                child: chitTemplate == null
@@ -278,7 +349,31 @@ class SelectChitMembers extends BaseModelWidget<ChitViewModel>{
                            child: Text("+ Select members"),
                            onPressed: onMemberSelected,
                         ),)
-                     : Center(child: Text("List of members"),)
+                     : ListView.builder(    
+                        itemCount: members.length,
+                        itemBuilder: (builder, index){
+                           Member member = members[index];
+                           return CustomCard(          
+                              customCardGestures: CustomCardGestures(
+                                 onTap: onMemberSwitched(index)
+                              ),
+                              model: model,
+                              child: Padding(
+                                 padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                                 child: Row(
+                                    children: [
+                                       Expanded(child:Text(member.name+" ${member.aliasName != null && member.aliasName != '' ? "( "+member.aliasName+" )" : '' }")),
+                                       Padding(
+                                       padding: const EdgeInsets.all(5.0),
+                                       child: Text(member.phone),
+                                       ),
+                                       Icon(Icons.phone_forwarded_rounded, size: 20.0,),
+                                    ],
+                                 ),
+                              ),
+                           );
+                        }
+                     )
             ),
          ],
       );
@@ -287,10 +382,13 @@ class SelectChitMembers extends BaseModelWidget<ChitViewModel>{
 
 class ActionButtons extends BaseModelWidget<ChitViewModel>{
 
+   final ChitInfo chitInfo;
    final Function onCancel;
-   final Function onSuccess;
+   final Function onCreate;
+   final Function onFinishLater;
+   final Function onUpdate;
 
-   ActionButtons({ @required this.onCancel, @required this.onSuccess });
+   ActionButtons({ @required this.onCancel, @required this.onCreate, @required this.onFinishLater, @required this.onUpdate, @required this.chitInfo });
 
    @override
    Widget build(BuildContext context, ChitViewModel model) {
@@ -311,8 +409,16 @@ class ActionButtons extends BaseModelWidget<ChitViewModel>{
                child: UIWidgets.buttonSuccess(
                   model: model, 
                   context: context, 
-                  label: model.language.buttonCreate,
-                  onPressed: onSuccess
+                  label: chitInfo?.id == null
+                     ? model.language.buttonCreate
+                     : chitInfo.members?.length == chitInfo.chitTemplate.membersCount
+                        ? model.language.buttonUpdate
+                        : model.language.buttonFinishLater,
+                  onPressed: chitInfo?.id == null
+                     ? onCreate
+                     : chitInfo.members?.length == chitInfo.chitTemplate.membersCount
+                        ? onUpdate
+                        : onFinishLater,
                )
             ),
          ],

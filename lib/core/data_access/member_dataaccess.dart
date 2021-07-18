@@ -3,17 +3,32 @@ import '../shared/services/http_service.dart';
 import 'data_access.dart';
 
 class MemberDataAccess extends BaseDataAccess{
-   Future<List<Member>> getMembers() async {
-      List<Member> members = [];
 
+   List<Member> _members = [];
+
+   List<Member> get members => _members;
+
+   void markMemberAsSelected(Member selectedMember){
+      int index = _members.indexWhere((member) => member.selected);
+      if(index != -1){
+         _members[index].deselect();  
+      }
+      selectedMember.markAsSelected();
+   }
+
+   void deselectAll(){
+      for(int i = 0; i < _members.length; i++){
+         _members[i].deselect();
+      }
+   }
+
+   Future<void> getMembers() async {
       HttpResponse response = await httpClient.get(url: "/member");
       handleResponseCode(response, 200);
 
       var memberArray = response.body["data"] as List;
 
-      members = memberArray.map((member) => Member.fromJson(member)).toList();
-
-      return members;
+      _members = memberArray.map((member) => Member.fromJson(member)).toList();
    }
 
    Future<Member> postAddNewMember(Map<String , String> memberMap) async{

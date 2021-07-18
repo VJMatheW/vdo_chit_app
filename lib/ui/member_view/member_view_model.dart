@@ -5,9 +5,10 @@ import '../../locator.dart';
 import '../base_model.dart';
 
 class MemberViewModel extends BaseModel{
-
-   List<Member> members = [];
+   
    MemberDataAccess memberDataAccess = locator<MemberDataAccess>();
+   
+   List<Member> get members => memberDataAccess.members;
 
    void init(){
       getMembers();
@@ -18,10 +19,9 @@ class MemberViewModel extends BaseModel{
    void getMembers() async {
       try{
          setState(ViewState.Busy);
-         members = await memberDataAccess.getMembers();
-         print("Member received ${members.length}");
+         await memberDataAccess.getMembers();
+         print("Member received ${memberDataAccess.members.length}");
       }catch(e){
-         members = [];
          print("Exception $e");
       }finally{
          setState(ViewState.Idle);

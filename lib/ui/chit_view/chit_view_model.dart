@@ -12,7 +12,8 @@ class ChitViewModel extends BaseModel{
 
    List<ChitInfo> chits = [];
    List<ChitTemplate> chitTemplates = [];
-   List<Member> members = [];
+
+   List<Member> get members => chitMemberDataAccess.members;
 
    void init(){
       getChits();
@@ -46,9 +47,10 @@ class ChitViewModel extends BaseModel{
 
    void getMembers() async {
       try{
-         if(members.length == 0){
-            members = await chitMemberDataAccess.getMembers();
+         if(chitMemberDataAccess.members.length == 0){
+            await chitMemberDataAccess.getMembers();
          }
+         chitMemberDataAccess.deselectAll();
       }catch(e){
          print("Getting members failed $e");
       }finally{
@@ -56,4 +58,24 @@ class ChitViewModel extends BaseModel{
       }
    }
 
+   void markMemberAsSelected(Member selectedMember){
+      try{
+         chitMemberDataAccess.markMemberAsSelected(selectedMember);
+      }catch(e){
+         print("Error marking member as selected $e");
+      }finally{
+         Future.delayed(Duration.zero, (){ setState(ViewState.Idle); });
+      }
+   }
+
+   Future<List<Member>> getMembersOfChit(int chitId) async {
+      try{
+         List<Member> members = await chitDataAccess.getMembersOfChit(chitId);
+         return members;
+      }catch(e){
+         print("Error getting chit members info $e");
+      }finally{
+         Future.delayed(Duration.zero, (){ setState(ViewState.Idle); });
+      }
+   }
 }

@@ -28,7 +28,7 @@ class CustomRouter {
       case "/chit":
          return CupertinoPageRoute(builder: (_) => ChitView());
       case "/addchit":
-         return CupertinoPageRoute(builder: (_) => AddChitView());
+         return CupertinoPageRoute(builder: (_) => AddChitView(chit: settings.arguments,));
       case "/selectchittemplate":
          return OverlayPageRoute(builder: (_) => SelectChitTemplateView());
       case "/selectchitmembers":

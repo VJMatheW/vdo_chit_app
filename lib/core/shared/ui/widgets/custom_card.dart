@@ -6,17 +6,18 @@ class CustomCard extends StatelessWidget {
 
    final BaseModel model;
    final Widget child;
-   CustomCardGestures customCardGestures;
+   final CustomCardGestures customCardGestures;
    final double bottomMargin;
+   final Color color;
    
-   CustomCard({ Key key, this.model, this.child, this.bottomMargin = 15.0, this.customCardGestures }) : super(key: key);
+   CustomCard({ Key key, @required this.model, @required this.child, this.bottomMargin = 15.0, this.customCardGestures, this.color }) : super(key: key);
 
    @override
    Widget build(BuildContext context) {
       return Container(
         margin: EdgeInsets.only(bottom: bottomMargin),
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: color ?? Colors.white,
             borderRadius: BorderRadius.all(Radius.circular(3.0)),
             boxShadow: [
                BoxShadow(

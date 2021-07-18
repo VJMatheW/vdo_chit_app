@@ -60,6 +60,7 @@ class ChitList extends BaseModelWidget<ChitViewModel>{
                   customCardGestures: CustomCardGestures(
                      onTap: (){
                         print("Move to next screen");
+                        Navigator.of(context).pushNamed("/addchit", arguments: chit);
                      },
                   ),
                   child: Stack(
@@ -97,7 +98,6 @@ class ChitList extends BaseModelWidget<ChitViewModel>{
                                              label: model.language.labelChitName, 
                                              value: chit.name, 
                                              model: model,
-                                             valueFontSize: 15.0,
                                           )
                                        ), 
                                        Expanded(

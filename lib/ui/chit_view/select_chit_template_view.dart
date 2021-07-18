@@ -70,8 +70,6 @@ class SelectChitTemplateView extends StatelessWidget {
                                           ? Center(child: CupertinoActivityIndicator(),)
                                           : ChitTemplateList()
                                     ),
-                                    // Expanded(child: ChitTemplateList()),
-                                    // ,
                                  ],
                               ),
                            )
@@ -142,7 +140,6 @@ class ChitTemplateList extends BaseModelWidget<ChitViewModel>{
                ),
             );
          },
-
       );
    }
 
