@@ -31,6 +31,13 @@ class HttpService {
       final response = await httpClient.post(httpRequest.url, body: httpRequest.body, headers: headers);
       return HttpResponse(response.statusCode, response.body);
    }
+
+   Future<HttpResponse> put({ @required String url, Map<String, String> headers = header, @required Object body }) async{
+      print("PUT $baseUrl$url");
+      HttpRequest httpRequest = HttpRequest("$baseUrl$url", body);
+      final response = await httpClient.put(httpRequest.url, body: httpRequest.body, headers: headers);
+      return HttpResponse(response.statusCode, response.body);
+   }
 }
 
 class HttpResponse{

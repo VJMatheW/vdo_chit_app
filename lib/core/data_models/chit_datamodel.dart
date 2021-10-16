@@ -69,6 +69,15 @@ class ChitInfo extends Chit{
       );
    }
 
+   factory ChitInfo.fromJsonForChitAdd(Map<String, dynamic> jsonObject,){
+      return ChitInfo(
+         id: jsonObject["id"],
+         name: jsonObject["name"],
+         chitDay: jsonObject["chit_day"],
+         status: jsonObject["status"],
+      );
+   }
+
    ChitTemplate get chitTemplate => _chitTemplate;
    List<Installment> get installments => _installments;
    int get addedMembersCount => _addedMembersCount;
@@ -76,6 +85,10 @@ class ChitInfo extends Chit{
 
    void setMembers(List<Member> members){
       this._members = members;
+   }
+
+   void switchMember(Member member, int index){
+      this._members[index] = member;
    }
 
    void addMember(Member member){

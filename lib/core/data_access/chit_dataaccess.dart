@@ -79,4 +79,38 @@ class ChitDataAccess extends BaseDataAccess{
       
       return members;
    }
+
+   Future<Map<String, dynamic>> postChitMember(int chitId, Map body) async {
+      /**
+       *  {
+            "chit_id": "7",
+            "member_id": 1,
+            "created_by": 1,
+            "org_id": 1,
+            "alias_name": "test",
+            "id": 9
+         }
+       */
+      HttpResponse response = await _httpClient.post(url: "/chit/$chitId/member", body: body);
+      handleResponseCode(response, 201);
+
+      var chitMemberObj = response.body["data"] as Object;
+      return chitMemberObj;
+   }
+
+   Future<Map<String, dynamic>> putChitMember(int chitId, Map body) async {
+      HttpResponse response = await _httpClient.put(url: "/chit/$chitId/member", body: body);
+      handleResponseCode(response, 201);
+
+      var chitMemberObj = response.body["data"] as Object;
+      return chitMemberObj;
+   }
+
+   Future<Map<String, dynamic>> postChit(Map body) async {
+      HttpResponse response = await httpClient.post(url: "/chit", body: body);
+      handleResponseCode(response, 201);
+
+      var chitObject = response.body["data"] as Object;
+      return chitObject;
+   }
 }

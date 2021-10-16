@@ -32,7 +32,7 @@ class CustomRouter {
       case "/selectchittemplate":
          return OverlayPageRoute(builder: (_) => SelectChitTemplateView());
       case "/selectchitmembers":
-         return OverlayPageRoute(builder: (_) => SelectChitMembersView());
+         return OverlayPageRoute(builder: (_) => SelectChitMembersView( data: settings.arguments ));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

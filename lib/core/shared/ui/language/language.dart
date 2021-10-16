@@ -51,6 +51,9 @@ abstract class AppLanguage{
    String buttonSelect;
    String buttonFinishLater;
    String buttonUpdate;
+
+   // info
+   String infoCreateChitAddMember;
 }
 
 class English implements AppLanguage{
@@ -107,6 +110,9 @@ class English implements AppLanguage{
    String buttonSelect = 'Select';
    String buttonFinishLater = 'Finish Later';
    String buttonUpdate = 'Update';
+
+   // info
+   String infoCreateChitAddMember = 'Create chit to add Members';
 }
 
 class Tamil implements AppLanguage{
@@ -162,4 +168,7 @@ class Tamil implements AppLanguage{
    String buttonSelect = 'தேர்வு செய்';
    String buttonFinishLater = 'பின்னர் முடி';
    String buttonUpdate = 'புதுப்பி';
+
+   // info
+   String infoCreateChitAddMember = 'உறுப்பினர்களைச் சேர்க்க சீட்டை உருவாக்கவும்';
 }

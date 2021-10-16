@@ -24,6 +24,7 @@ class Member{
          phone: jsonObject["phone"],
          creditAmount: jsonObject["credit_amount"] ?? 0,
          chitMemberId: jsonObject["relation_member_id"],
+         aliasName: jsonObject["alias_name"],
       );
    }
 
@@ -40,7 +41,7 @@ class Member{
 
    @override
    String toString(){
-      return "$_name is $_selected";
+      return "$_name $_chitMemberId $_aliasName $_selected";
    }
 
    int get id => _id;
@@ -61,5 +62,9 @@ class Member{
 
    void deselect(){
       this._selected = false;
+   }
+
+   void setChitMemberId(int id){
+      this._chitMemberId = id;
    }
 }

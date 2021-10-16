@@ -11,7 +11,8 @@ import '../base_model_widget.dart';
 import 'chit_view_model.dart';
 
 class SelectChitMembersView extends StatefulWidget {
-   const SelectChitMembersView({ Key key }) : super(key: key);
+   final data;
+   const SelectChitMembersView({ Key key, this.data }) : super(key: key);
 
    @override
    _SelectChitMembersViewState createState() => _SelectChitMembersViewState();
@@ -22,12 +23,27 @@ class _SelectChitMembersViewState extends State<SelectChitMembersView> {
    TextEditingController _searchMemberController;
    TextEditingController _aliasNameController;
    Member selectedMember;
+   Member memberToBeReplaced;
+   int indexToReplace;
+   int chitId;
 
    @override
    void initState() {
       _searchMemberController = TextEditingController();
       _aliasNameController = TextEditingController(text: '');
+
+      if(widget.data["mode"] == "replace"){
+         indexToReplace = widget.data["indexToReplace"];
+         memberToBeReplaced = widget.data["member"];
+         chitId = widget.data["chitId"];
+      }
+
+      if(widget.data["mode"] == "add"){
+         chitId = widget.data["chitId"];
+      }
+
       locator<ChitViewModel>().getMembers();
+
       super.initState();
    }
 
@@ -106,7 +122,7 @@ class _SelectChitMembersViewState extends State<SelectChitMembersView> {
                                                    ),
                                                 ),
                                              ),
-                                          ),                                          
+                                          ),
                                        ],
                                     ),
 
@@ -123,22 +139,46 @@ class _SelectChitMembersViewState extends State<SelectChitMembersView> {
                                     SizedBox(height: 5.0,),
 
                                     /// Select button
-                                    UIWidgets.buttonSuccess(
-                                       context: context, 
-                                       label: model.language.buttonSelect,
-                                       model: model,
-                                       onPressed: (){
-                                          if(selectedMember != null){
-                                             /// select button
-                                             Map<String, dynamic> obj = {
-                                                "member": selectedMember,
-                                                "aliasName": _aliasNameController.text
-                                             };
-                                             selectedMember.setAliasName(_aliasNameController.text);
-                                             Navigator.of(context).pop(selectedMember);
-                                          }
-                                       }
+                                    Expanded(
+                                       flex: 0,
+                                       child: model.state == ViewState.Busy
+                                          ? Center(child: CupertinoActivityIndicator(),)
+                                          : UIWidgets.buttonSuccess(
+                                             context: context, 
+                                             label: model.language.buttonSelect,
+                                             model: model,
+                                             onPressed: () async {
+                                                if(selectedMember != null){
+                                                   selectedMember.setAliasName(_aliasNameController.text);
+
+                                                   Map<String, dynamic> chitMember;
+
+                                                   // hit add api or update chit member API
+                                                   if(memberToBeReplaced == null){
+                                                      // invoke add api
+                                                      chitMember = await model.addChitMember(chitId, selectedMember);
+                                                   }else{
+                                                      // invoke update api
+                                                      chitMember = await model.replaceChitMember(chitId, selectedMember, memberToBeReplaced);
+                                                   }
+                                                   
+                                                   if(chitMember != null){
+                                                      print(selectedMember);
+                                                      // caching locally
+                                                      selectedMember.setChitMemberId(chitMember["id"]);
+                                                      Map<String, dynamic> obj = {
+                                                            "mode": widget.data["mode"],
+                                                            "member": selectedMember,
+                                                            "indexToReplace": indexToReplace
+                                                      };
+                                                      
+                                                      Navigator.of(context).pop(obj);
+                                                   }
+                                                }
+                                             }
+                                          ),
                                     ),
+                                    
                                  ],
                               ),
                            )

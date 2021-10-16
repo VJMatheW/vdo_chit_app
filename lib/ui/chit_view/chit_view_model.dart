@@ -78,4 +78,67 @@ class ChitViewModel extends BaseModel{
          Future.delayed(Duration.zero, (){ setState(ViewState.Idle); });
       }
    }
+
+   Future<Map<String, dynamic>> addChitMember(int chitId, Member selectedMember) async {
+      Map<String, dynamic> response = {};
+      try{
+         if(chitId == null){
+            throw "Chit id is required";
+         }
+         setState(ViewState.Busy);
+         Map<String, dynamic> body = {
+            "member_id": selectedMember.id,
+            "alias_name": selectedMember.aliasName
+         };
+         response =  await chitDataAccess.postChitMember(chitId, body);
+      }catch(e){
+         print("Error in ChitViewModel.addChitMember : $e");
+      }finally{
+         setState(ViewState.Idle);
+      }
+      return response;
+   }
+
+   Future<Map<String, dynamic>> replaceChitMember(int chitId, Member selectedMember, Member memberToBeReplaced) async {
+      Map<String, dynamic> response = {};
+      try{
+         if(chitId == null){
+            throw "Chit id is required";
+         }
+         setState(ViewState.Busy);
+         Map<String, dynamic> body = {
+            "id": memberToBeReplaced.chitMemberId,
+            "member_id": selectedMember.id,
+            "alias_name": selectedMember.aliasName
+         };
+         response =  await chitDataAccess.putChitMember(chitId, body);
+      }catch(e){
+         print("Error in ChitViewModel.replaceChitMember : $e");
+      }finally{
+         setState(ViewState.Idle);
+      }
+      return response;
+   }
+
+   Future<Map<String, dynamic>> createChit({ int chitTemplateId, String name, int chitDay, String status }) async {
+      Map<String, dynamic> chitObj = {};
+      try{
+         if(chitTemplateId == null) throw "Select template to create chit";
+         if(name == null || name.trim().length == 0) throw "Chit name should not be empty";
+         if(chitDay == null) throw "Chit day should not be empty";
+
+         Map<String, dynamic> body = {
+            "chit_template_id": chitTemplateId,
+            "name": name,
+            "chit_day": chitDay,
+            "status": status
+         };
+         chitObj = await chitDataAccess.postChit(body);
+      }catch(e){
+         print("Error in ChitViewModel.createChit : $e");
+      }finally{
+         setState(ViewState.Idle);
+      }
+      return chitObj;
+   }
 }

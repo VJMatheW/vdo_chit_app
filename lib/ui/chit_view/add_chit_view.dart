@@ -28,6 +28,7 @@ class _AddChitViewState extends State<AddChitView> {
    void fetchMembersOfChit(int chitId) async {
       List<Member> members = await locator<ChitViewModel>().getMembersOfChit(chitId);
       this.selectedMembers = members ?? [];
+      chit.setMembers(members);
       setState(() {});
    }
 
@@ -73,8 +74,8 @@ class _AddChitViewState extends State<AddChitView> {
                         
                         /// Selected chit member area
                         Expanded(child: chit?.id != null
-                           ? SelectChitMembers(chitTemplate: chit.chitTemplate, members: chit.members, onSelect: selectMember, onSwitch: switchMember,)
-                           : Center(child: Text("Create chit to add Members"))
+                           ? SelectChitMembers(chit: chit, chitTemplate: chit.chitTemplate, members: chit.members, onSelect: selectMember, onSwitch: switchMember,)
+                           : Center(child: Text(model.language.infoCreateChitAddMember))
                         ),
                         
                         /// ACTION BUTTONS
@@ -110,9 +111,17 @@ class _AddChitViewState extends State<AddChitView> {
          BuildContext context){
       void create() async {
          print("Creating new chit ${model.language.buttonCreate} clicked");
-         chit.setId(34);
-         chit.setName(nameController.text);
-         chit.setDay( num.tryParse(dayController.text));
+         // TODO hit API to create new chit
+         Map<String, dynamic> chitMap = await model.createChit(
+            chitTemplateId: chit.chitTemplate?.id,
+            name: nameController.text,
+            chitDay: num.tryParse(dayController.text),
+            status: "draft"
+         );
+
+         chit.setId(chitMap["id"]);
+         chit.setName(chitMap["name"]);
+         chit.setDay(chitMap["chit_day"]);
          Future.delayed(Duration.zero, (){ model.setState(ViewState.Idle); });
          // Navigator.pop(context);
       }
@@ -121,6 +130,7 @@ class _AddChitViewState extends State<AddChitView> {
 
    Function(ChitViewModel model, BuildContext context) onFinishLater = (ChitViewModel model, BuildContext context){
       void hello() async {
+         // TODO hit chit update api
          print("Creating new chit ${model.language.buttonCreate} clicked");
          Navigator.pop(context);
       }
@@ -141,15 +151,17 @@ class _AddChitViewState extends State<AddChitView> {
       Future.delayed(Duration.zero, (){ model.setState(ViewState.Idle); });
    }
 
-   void selectMember(Member member, BaseModel model){
-      Member newMemberObj = Member.fromInstance(member);
+   void selectMember(Map obj, BaseModel model){
+      Member newMemberObj = Member.fromInstance(obj["member"]);
       chit.addMember(newMemberObj);
       print("Member added ${chit.members.length}");
       Future.delayed(Duration.zero, (){ model.setState(ViewState.Idle); });
    }
 
-   void switchMember(Member member, BaseModel model){
-      this.selectedMembers.add(member);
+   void switchMember(Map obj, BaseModel model){
+      Member member = Member.fromInstance(obj["member"]);
+      int index = obj["indexToReplace"];
+      chit.switchMember(member, index);
       print("Member added");
       Future.delayed(Duration.zero, (){ model.setState(ViewState.Idle); });
    }
@@ -286,32 +298,42 @@ class ChitDateInputField extends BaseModelWidget<ChitViewModel>{
 
 class SelectChitMembers extends BaseModelWidget<ChitViewModel>{
 
+   final ChitInfo chit;
    final ChitTemplate chitTemplate;
    final List<Member> members;
    final Function onSelect;
    final Function onSwitch;
 
-   SelectChitMembers({ @required this.chitTemplate, @required this.members, @required this.onSelect, @required this.onSwitch });
+   SelectChitMembers({ @required this.chit, @required this.chitTemplate, @required this.members, @required this.onSelect, @required this.onSwitch });
 
    @override
    Widget build(BuildContext context, ChitViewModel model) {
 
-      Function onMemberSelected = () async {
-         dynamic member = await Navigator.of(context).pushNamed("/selectchitmembers");
+      Function onSelectMember = () async {
+         Map<String, dynamic> arg = {
+               "mode": "add",
+               "chitId": chit.id           
+            };
+         dynamic member = await Navigator.of(context).pushNamed("/selectchitmembers", arguments: arg);
          if(member != null){
             onSelect(member, model);
          }
       };
 
-      Function onMemberSwitched = (int indexToReplace) {
-         Function switchMember = () async {
-            dynamic obj = await Navigator.of(context).pushNamed("/selectchitmembers", arguments: { "index": indexToReplace });
+      Function onSwitchMember = (Member member, int indexToReplace) {
+         return () async {
+            Map<String, dynamic> arg = {
+               "mode": "replace",
+               "member": member,
+               "indexToReplace": indexToReplace,
+               "chitId": chit.id           
+            };
+            dynamic obj = await Navigator.of(context).pushNamed("/selectchitmembers", arguments: arg);
             if(obj != null){
                onSwitch(obj, model);
             }
          };
 
-         return switchMember;
       };
 
       return Column(
@@ -331,7 +353,7 @@ class SelectChitMembers extends BaseModelWidget<ChitViewModel>{
                   chitTemplate != null
                   ? members.length < chitTemplate.membersCount
                      ? GestureDetector(
-                        onTap: onMemberSelected,
+                        onTap: onSelectMember,
                         child: Icon(Icons.arrow_drop_down, color: model.theme.primary, size: 30.0,)
                      )
                      : SizedBox.shrink()
@@ -347,7 +369,7 @@ class SelectChitMembers extends BaseModelWidget<ChitViewModel>{
                      ? Center(
                         child: TextButton(
                            child: Text("+ Select members"),
-                           onPressed: onMemberSelected,
+                           onPressed: onSelectMember,
                         ),)
                      : ListView.builder(    
                         itemCount: members.length,
@@ -355,7 +377,7 @@ class SelectChitMembers extends BaseModelWidget<ChitViewModel>{
                            Member member = members[index];
                            return CustomCard(          
                               customCardGestures: CustomCardGestures(
-                                 onTap: onMemberSwitched(index)
+                                 onTap: onSwitchMember(member, index)
                               ),
                               model: model,
                               child: Padding(
