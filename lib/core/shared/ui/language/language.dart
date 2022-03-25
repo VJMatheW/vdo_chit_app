@@ -16,6 +16,10 @@ abstract class AppLanguage{
    String labelChitMembers;
    String labelChitTemplate;
    String labelMemberAliasName;
+   String labelBidAmount;
+   String labelBidderName;
+   String labelBidderPhone;
+
 
    // appbar headings
    String appBarChitTemplate;
@@ -25,6 +29,7 @@ abstract class AppLanguage{
 
    // headings
    String headingOngoingChits;
+   String headingChitInstallments;
 
    // modal popup headings
    String modalHeadingAddChitTemplate;
@@ -75,6 +80,9 @@ class English implements AppLanguage{
    String labelChitMembers = 'Chit Members';
    String labelChitTemplate = 'Chit Template';
    String labelMemberAliasName = 'Member Alias Name';
+   String labelBidAmount = 'Bid Amount';
+   String labelBidderName = 'Bidder Name';
+   String labelBidderPhone = 'Phone';
 
    // appbar headings
    String appBarChitTemplate = 'Chit Template';
@@ -84,6 +92,7 @@ class English implements AppLanguage{
 
    // headings   
    String headingOngoingChits = 'Ongoing Chits';
+   String headingChitInstallments = 'Installments';
 
    // modal popup headings
    String modalHeadingAddChitTemplate = 'New Chit Template';
@@ -121,7 +130,7 @@ class Tamil implements AppLanguage{
    String labelChitValue = 'சீட்டு மதிப்பு';
    String labelInstallmentNo = 'தவணை எண்';
    String labelMembers = 'உறுப்பினர்கள்';
-   String labelPayableAmount = 'செலுத்த வே. தொகை';
+   String labelPayableAmount = 'செ. வே. தொகை';
    String labelChitDate = 'சீட்டு தேதி';
    String labelChitPercentage = 'பீட் சதவிதம்';
    String labelChitMembersCount = 'உறுப்பினர்கள் எண்.';
@@ -133,6 +142,9 @@ class Tamil implements AppLanguage{
    String labelChitMembers = 'சீட்டு உறுப்பினர்கள்';
    String labelChitTemplate = 'சீட்டு கட்டமைப்பு';
    String labelMemberAliasName = 'உறுப்பினர் மாற்று பெயர்';
+   String labelBidAmount = 'ஏலத்தொகை';
+   String labelBidderName = 'ஏலதாரர் பெயர்';
+   String labelBidderPhone = 'தொலைபேசி';
 
    // appbar headings
    String appBarChitTemplate = 'சீட்டு கட்டமைப்பு';
@@ -142,6 +154,7 @@ class Tamil implements AppLanguage{
 
    // headings
    String headingOngoingChits = 'தற்போதைய சீட்டு';  
+   String headingChitInstallments = 'தவணைகள்';
 
    // modal popup headings
    String modalHeadingAddChitTemplate = 'புதிய சீட்டு கட்டமைப்பு';

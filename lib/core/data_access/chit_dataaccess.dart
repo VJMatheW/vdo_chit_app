@@ -1,13 +1,11 @@
 import 'dart:io';
 
-import 'package:vdo_chit_app/core/data_access/data_access.dart';
-
+import '../../locator.dart';
 import '../data_models/chit_datamodel.dart';
 import '../data_models/chit_template_datamodel.dart';
 import '../data_models/data_models.dart';
-
-import '../../locator.dart';
 import '../shared/services/http_service.dart';
+import 'data_access.dart';
 
 class ChitDataAccess extends BaseDataAccess{
    final HttpService _httpClient = locator<HttpService>();
@@ -61,6 +59,27 @@ class ChitDataAccess extends BaseDataAccess{
       }).toList();
       return chitInfos;
    }
+
+   Future<ChitInfo> getChitInstallments(int chitId) async {
+      
+      HttpResponse response = await _httpClient.get(url: "/chit/$chitId/installments");
+      handleResponseCode(response, 200);
+
+      var obj = response.body["data"] as Object;
+      var temp = obj as Map<String, dynamic>;
+
+      ChitTemplate chitTemplate = ChitTemplate.fromJson(temp['chitTemplate']);
+      
+      var installmentsArray = temp["installments"] as List;
+      List<Installment> installments = installmentsArray.map(( installmentObj){
+         Bidder bidder = Bidder.fromJson(installmentObj["bidder"]);
+         Installment installment = Installment.fromJson(installmentObj, bidder);
+         return installment;
+      }).toList();
+      
+      ChitInfo chitInfo = ChitInfo.fromJson(obj, chitTemplate, installments);
+      return chitInfo;
+   } 
 
    Future<List<Member>> getMembersOfChit(int chitId) async {
       List<Member> members = [];

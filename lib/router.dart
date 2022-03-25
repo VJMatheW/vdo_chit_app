@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:vdo_chit_app/ui/chit_info_view/chit_info_view.dart';
 import 'package:vdo_chit_app/ui/chit_view/add_chit_view.dart';
 import 'package:vdo_chit_app/ui/chit_view/chit_view.dart';
 import 'package:vdo_chit_app/ui/chit_view/select_chit_members_view.dart';
@@ -7,8 +8,8 @@ import 'package:vdo_chit_app/ui/chit_view/select_chit_template_view.dart';
 import 'package:vdo_chit_app/ui/member_view/add_member_view.dart';
 
 import 'core/shared/ui/widgets/overlay_page_route.dart';
-import 'ui/chit_template_view.dart/add_chit_template_view.dart';
-import 'ui/chit_template_view.dart/chit_template_view.dart';
+import 'ui/chit_template_view/add_chit_template_view.dart';
+import 'ui/chit_template_view/chit_template_view.dart';
 import 'ui/dashboard_view/dashboard_view.dart';
 import 'ui/member_view/member_view.dart';
 
@@ -33,6 +34,10 @@ class CustomRouter {
          return OverlayPageRoute(builder: (_) => SelectChitTemplateView());
       case "/selectchitmembers":
          return OverlayPageRoute(builder: (_) => SelectChitMembersView( data: settings.arguments ));
+      case "/installments":
+         return CupertinoPageRoute(builder: (_) => ChitInfoView( data: settings.arguments ));
+      case "/installment":
+         return MaterialPageRoute(builder: (_) => ChitInfoView( data: settings.arguments ));
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

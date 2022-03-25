@@ -12,7 +12,7 @@ class Cell extends StatelessWidget {
    final double labelFontSize;
    final double valueFontSize;
 
-   Cell({ Key key, @required this.label, @required this.value, this.icon, this.isPhoneNumber = false, this.model, this.labelFontSize = 10.0, this.valueFontSize = 20.0 }) : super(key: key);
+   Cell({ Key key, @required this.label, @required this.value, this.icon, this.isPhoneNumber = false, this.model, this.labelFontSize = 10.0, this.valueFontSize = 15.0 }) : super(key: key);
 
    @override
    Widget build(BuildContext context) {
@@ -29,6 +29,7 @@ class Cell extends StatelessWidget {
                            Text(
                               label, 
                               overflow: TextOverflow.ellipsis,
+                              softWrap: true,
                               style: TextStyle(
                                  fontSize: labelFontSize,
                                  color: model.theme.primary
@@ -38,7 +39,7 @@ class Cell extends StatelessWidget {
                            icon != null 
                            ? Padding(
                              padding: const EdgeInsets.only(left:8.0),
-                             child: Icon(icon, color: model.theme.primary, size: 15,),
+                             child: Icon(icon, color: model.theme.primary, size: 13,),
                            )
                            : Container()
                         ],

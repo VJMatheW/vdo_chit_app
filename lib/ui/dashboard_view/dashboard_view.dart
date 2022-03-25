@@ -494,7 +494,9 @@ class DashboardChitList extends BaseModelWidget<DashboardViewModel> {
                customCardGestures: CustomCardGestures(
                   onTap: (){
                      dashboardDispose();
-                     print("Move to chit detail screen");                     
+                     print("Moveing to chit detail screen"); 
+                     Map<String, dynamic> arg = { "chitId": chitInfo.id };
+                     Navigator.pushNamed(context, "/installments", arguments: arg);                   
                   },
                ),
                model: model,

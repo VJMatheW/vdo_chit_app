@@ -10,7 +10,7 @@ class CustomCard extends StatelessWidget {
    final double bottomMargin;
    final Color color;
    
-   CustomCard({ Key key, @required this.model, @required this.child, this.bottomMargin = 15.0, this.customCardGestures, this.color }) : super(key: key);
+   CustomCard({ Key key, @required this.model, @required this.child, this.bottomMargin = 10.0, this.customCardGestures, this.color }) : super(key: key);
 
    @override
    Widget build(BuildContext context) {
